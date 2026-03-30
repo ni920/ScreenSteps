@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScreenSteps – Document anything. Screenshot by screenshot.</title>
+  <meta name="description" content="ScreenSteps is a local Chrome extension that records your browser interactions step by step, captures screenshots automatically and exports visual documentation as Markdown, HTML, Confluence or PDF." />
+  <meta property="og:title" content="ScreenSteps" />
+  <meta property="og:description" content="Record browser interactions and export visual step-by-step documentation. 100% local, no account required." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/png" sizes="48x48" href="assets/icons/icon48.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────────────── -->
+<nav>
+  <a class="nav-brand" href="#">
+    <img src="assets/icons/icon48.png" alt="ScreenSteps icon" />
+    <span>ScreenSteps</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#exports">Exports</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="https://chromewebstore.google.com" class="btn-nav" target="_blank" rel="noopener">Add to Chrome</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="eyebrow">Free Chrome Extension · Manifest V3</div>
+  <h1>Document anything.<br /><em>Screenshot by screenshot.</em></h1>
+  <p>
+    ScreenSteps captures your browser interactions in real time, marks every
+    click and input on the screenshot and exports polished step-by-step
+    documentation — all locally, without sending a single byte to a server.
+  </p>
+  <div class="hero-cta">
+    <a href="https://chromewebstore.google.com" class="btn btn-primary" target="_blank" rel="noopener">
+      ⬇︎ &nbsp;Add to Chrome &mdash; it's free
+    </a>
+    <a href="https://github.com/nicosaia/ScreenSteps" class="btn btn-secondary" target="_blank" rel="noopener">
+      View on GitHub
+    </a>
+  </div>
+  <div class="badge-local">100% local &nbsp;·&nbsp; No account &nbsp;·&nbsp; No cloud</div>
+</section>
+
+<!-- ── Features ─────────────────────────────────────────────────────────── -->
+<section id="features">
+  <div class="section-header">
+    <h2>Everything you need,<br />nothing you don't.</h2>
+    <p>Built for people who document workflows, build tutorials or write SOPs.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📸</div>
+      <h3>Automatic Screenshots</h3>
+      <p>After every click, form input or page navigation ScreenSteps captures the visible tab — no manual snipping required.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h3>Visual Annotations</h3>
+      <p>Each screenshot highlights the exact element you interacted with using a coloured dot or rectangle. No guessing where to look.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✏️</div>
+      <h3>Editable Steps</h3>
+      <p>Reorder, rename and toggle steps in the built-in manager before exporting. Delete noise, keep signal.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📦</div>
+      <h3>Four Export Formats</h3>
+      <p>Markdown ZIP, HTML ZIP, Confluence-ready HTML and a print-to-PDF view — one recording, every format.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌍</div>
+      <h3>German &amp; English</h3>
+      <p>UI language and documentation language are independent settings. Record in English, review in German — or vice versa.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Fully Local</h3>
+      <p>All data stays in <code>chrome.storage.local</code> on your device. No backend, no analytics, no account.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── How it works ──────────────────────────────────────────────────────── -->
+<section id="how">
+  <div class="section-header">
+    <h2>Three steps. That's it.</h2>
+    <p>From zero to exportable documentation in under a minute.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Start Recording</h3>
+      <p>Click the ScreenSteps icon in your toolbar and hit <strong>Start</strong>. The extension silently watches in the background.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Interact Normally</h3>
+      <p>Click buttons, fill forms, navigate pages. Every meaningful action is captured with a screenshot and a readable description.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Export &amp; Share</h3>
+      <p>Stop the recording, open the manager, edit if needed and export as Markdown, HTML, Confluence or PDF.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Exports ───────────────────────────────────────────────────────────── -->
+<section id="exports">
+  <div class="section-header">
+    <h2>Publish anywhere.</h2>
+    <p>One recording exports to four formats — pick whatever fits your workflow.</p>
+  </div>
+  <div class="exports-grid">
+    <div class="export-chip"><span>📝</span> Markdown ZIP</div>
+    <div class="export-chip"><span>🌐</span> HTML ZIP</div>
+    <div class="export-chip"><span>🔵</span> Confluence Export</div>
+    <div class="export-chip"><span>🖨️</span> PDF (print view)</div>
+  </div>
+</section>
+
+<!-- ── Privacy teaser ────────────────────────────────────────────────────── -->
+<section id="privacy-teaser">
+  <h2>Your data stays yours.</h2>
+  <p>
+    ScreenSteps is a purely local extension. It never connects to any server,
+    never stores anything outside your browser, and never tracks anything.
+  </p>
+  <div class="privacy-bullets">
+    <span class="privacy-bullet">No server connections</span>
+    <span class="privacy-bullet">No analytics</span>
+    <span class="privacy-bullet">No account required</span>
+    <span class="privacy-bullet">Screenshots stay on device</span>
+    <span class="privacy-bullet">Open source</span>
+  </div>
+  <a href="privacy.html" class="btn btn-secondary">Read the full Privacy Policy →</a>
+</section>
+
+<!-- ── Footer ────────────────────────────────────────────────────────────── -->
+<footer>
+  <p>
+    &copy; 2026 ScreenSteps &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="https://github.com/nicosaia/ScreenSteps" target="_blank" rel="noopener">GitHub</a>
+  </p>
+</footer>
+
+</body>
+</html>
+

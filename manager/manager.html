@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ScreenSteps Verwaltung</title>
+    <link rel="stylesheet" href="manager.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">ScreenSteps</p>
+          <h1 id="pageTitle">Aufnahmeverwaltung</h1>
+          <p id="pageLead" class="lead">Alle gespeicherten Recordings an einem Ort. Exportiere, pruefe oder lösche sie direkt hier.</p>
+        </div>
+        <button id="refreshButton" class="button button-ghost">Aktualisieren</button>
+      </header>
+
+      <section class="stats">
+        <article class="stat-card">
+          <span id="recordingCountLabel">Gespeicherte Recordings</span>
+          <strong id="recordingCount">0</strong>
+        </article>
+        <article class="stat-card">
+          <span id="stepTotalLabel">Gesamte Schritte</span>
+          <strong id="stepTotal">0</strong>
+        </article>
+        <article class="stat-card">
+          <span id="statusStatLabel">Aktiver Status</span>
+          <strong id="statusLabel">Bereit</strong>
+        </article>
+      </section>
+
+      <section class="panel controls-panel">
+        <div class="controls-grid">
+          <label class="control-field" for="uiLanguageSelect">
+            <span id="uiLanguageLabel">Sprache der Erweiterung</span>
+            <select id="uiLanguageSelect">
+              <option value="de">Deutsch</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+
+          <label class="control-field" for="recordingLanguageSelect">
+            <span id="recordingLanguageLabel">Dokumentationssprache fuer neue Aufnahmen</span>
+            <select id="recordingLanguageSelect">
+              <option value="de">Deutsch</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+
+          <div class="view-switcher">
+            <span id="viewLabel">Ansicht</span>
+            <div id="viewButtonsGroup" class="view-buttons" role="group" aria-label="Ansichtsmodus">
+              <button id="detailViewButton" class="button button-ghost view-button" type="button">Detail</button>
+              <button id="listViewButton" class="button button-ghost view-button" type="button">Liste</button>
+              <button id="gridViewButton" class="button button-ghost view-button" type="button">Raster</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <p id="message" class="message" aria-live="polite"></p>
+
+      <section id="editorSection" class="panel hidden">
+        <div class="panel-header">
+          <div>
+            <h2 id="editorTitle">Recording bearbeiten</h2>
+            <p id="editorCopy" class="panel-copy">Passe Titel, Schritttexte und Reihenfolge an und speichere die Version direkt im Archiv.</p>
+          </div>
+          <div class="editor-header-actions">
+            <button id="cancelEditButton" class="button button-ghost" type="button">Schliessen</button>
+            <button id="saveEditButton" class="button button-primary" type="button">Speichern</button>
+          </div>
+        </div>
+
+        <div class="editor-form">
+          <label class="control-field" for="recordingTitleInput">
+            <span id="recordingTitleLabel">Titel</span>
+            <input id="recordingTitleInput" type="text" placeholder="Aufnahmetitel" />
+          </label>
+        </div>
+
+        <div id="editorSteps" class="editor-steps"></div>
+      </section>
+
+      <section id="activeSection" class="panel hidden">
+        <div class="panel-header">
+          <h2 id="activeSectionTitle">Aktive Aufnahme</h2>
+        </div>
+        <div id="activeRecording"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2 id="archiveSectionTitle">Archiv</h2>
+        </div>
+        <div id="recordingsList" class="recordings-list"></div>
+      </section>
+    </main>
+
+    <script src="../src/export-utils.js"></script>
+    <script src="manager.js"></script>
+  </body>
+</html>
