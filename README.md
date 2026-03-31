@@ -32,16 +32,16 @@ ScreenSteps ist eine **lokale Chrome-Erweiterung** (Manifest V3), die relevante 
 
 <table>
   <tr>
-    <td><img src="docs/assets/pictures/bersicht-1.png" alt="Popup – Bereit" width="100%" /></td>
-    <td><img src="docs/assets/pictures/bersicht-2.png" alt="Aufnahme läuft" width="100%" /></td>
+    <td><img src="docs/assets/pictures/screenshot-1.png" alt="Popup – Bereit" width="100%" /></td>
+    <td><img src="docs/assets/pictures/screenshot-2.png" alt="Aufnahme läuft" width="100%" /></td>
   </tr>
   <tr>
     <td align="center"><em>Popup – Bereit zum Aufnehmen</em></td>
     <td align="center"><em>Aufnahme aktiv</em></td>
   </tr>
   <tr>
-    <td><img src="docs/assets/pictures/bersicht-3.png" alt="Verwaltung – Archiv" width="100%" /></td>
-    <td><img src="docs/assets/pictures/bersicht-4.png" alt="Schritte bearbeiten" width="100%" /></td>
+    <td><img src="docs/assets/pictures/screenshot-3.png" alt="Verwaltung – Archiv" width="100%" /></td>
+    <td><img src="docs/assets/pictures/screenshot-4.png" alt="Schritte bearbeiten" width="100%" /></td>
   </tr>
   <tr>
     <td align="center"><em>Verwaltung – Alle Recordings</em></td>
@@ -49,7 +49,7 @@ ScreenSteps ist eine **lokale Chrome-Erweiterung** (Manifest V3), die relevante 
   </tr>
 </table>
 
-<img src="docs/assets/pictures/bersicht-5.png" alt="Export-Ansicht" width="100%" />
+<img src="docs/assets/pictures/screenshot-5.png" alt="Export-Ansicht" width="100%" />
 <p align="center"><em>Export-Ansicht – Markdown, HTML, Confluence oder PDF</em></p>
 
 ---
