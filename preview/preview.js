@@ -74,13 +74,34 @@
     }
 
     const html = window.UiRecorderExportUtils.buildHtmlDocument(selectedRecording, {
-      autoPrint: shouldPrint,
       printMode: true
     });
 
-    document.open();
-    document.write(html);
-    document.close();
+    // Render inside a srcdoc-iframe so the generated HTML (which may contain
+    // inline styles/scripts needed for print) is not blocked by the extension's
+    // script-src 'self' CSP.  srcdoc frames have a null origin and are not
+    // subject to the parent extension page's Content Security Policy.
+    document.body.innerHTML = "";
+    document.body.style.cssText = "margin:0;padding:0;overflow:hidden;";
+
+    const frame = document.createElement("iframe");
+    frame.style.cssText =
+      "position:fixed;top:0;left:0;width:100%;height:100%;border:none;";
+    frame.srcdoc = html;
+
+    if (shouldPrint) {
+      frame.addEventListener("load", () => {
+        setTimeout(() => {
+          try {
+            frame.contentWindow.print();
+          } catch (_) {
+            window.print();
+          }
+        }, 320);
+      });
+    }
+
+    document.body.appendChild(frame);
   } catch (error) {
     renderError(activeCopy, error.message || activeCopy.renderFailed);
   }

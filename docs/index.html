@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ScreenSteps – Document anything. Screenshot by screenshot.</title>
-  <meta name="description" content="ScreenSteps is a local Chrome extension that records your browser interactions step by step, captures screenshots automatically and exports visual documentation as Markdown, HTML, Confluence or PDF." />
+  <title>ScreenSteps – Dokumentiere alles. Screenshot für Screenshot.</title>
+  <meta name="description" content="ScreenSteps ist eine lokale Chrome-Erweiterung, die Nutzerinteraktionen Schritt für Schritt aufzeichnet, automatisch Screenshots erstellt und die Dokumentation als Markdown, HTML, Confluence oder PDF exportiert. Keine KI. Keine Cloud. Keine Datensammlung." />
   <meta property="og:title" content="ScreenSteps" />
-  <meta property="og:description" content="Record browser interactions and export visual step-by-step documentation. 100% local, no account required." />
+  <meta property="og:description" content="Browser-Interaktionen aufzeichnen und als visuelle Schritt-für-Schritt-Dokumentation exportieren. 100 % lokal, kein Account, keine KI." />
   <meta property="og:type" content="website" />
   <link rel="icon" type="image/png" sizes="48x48" href="assets/icons/icon48.png" />
   <link rel="stylesheet" href="style.css" />
@@ -16,74 +16,185 @@
 <!-- ── Nav ──────────────────────────────────────────────────────────────── -->
 <nav>
   <a class="nav-brand" href="#">
-    <img src="assets/icons/icon48.png" alt="ScreenSteps icon" />
+    <img src="assets/icons/icon48.png" alt="ScreenSteps Icon" />
     <span>ScreenSteps</span>
   </a>
-  <ul class="nav-links">
-    <li><a href="#features">Features</a></li>
-    <li><a href="#how">How it works</a></li>
-    <li><a href="#exports">Exports</a></li>
-    <li><a href="privacy.html">Privacy</a></li>
-    <li><a href="https://chromewebstore.google.com" class="btn-nav" target="_blank" rel="noopener">Add to Chrome</a></li>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#features" onclick="closeNav()">Features</a></li>
+    <li><a href="#no-ai" onclick="closeNav()">Kein KI</a></li>
+    <li><a href="#how" onclick="closeNav()">So funktioniert's</a></li>
+    <li><a href="privacy.html" onclick="closeNav()">Datenschutz</a></li>
+    <li><a href="https://chromewebstore.google.com" class="btn-nav" target="_blank" rel="noopener" onclick="closeNav()">Zu Chrome hinzufügen</a></li>
   </ul>
+  <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="navLinks">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- ── Hero ─────────────────────────────────────────────────────────────── -->
-<section class="hero">
-  <div class="eyebrow">Free Chrome Extension · Manifest V3</div>
-  <h1>Document anything.<br /><em>Screenshot by screenshot.</em></h1>
-  <p>
-    ScreenSteps captures your browser interactions in real time, marks every
-    click and input on the screenshot and exports polished step-by-step
-    documentation — all locally, without sending a single byte to a server.
-  </p>
-  <div class="hero-cta">
-    <a href="https://chromewebstore.google.com" class="btn btn-primary" target="_blank" rel="noopener">
-      ⬇︎ &nbsp;Add to Chrome &mdash; it's free
-    </a>
-    <a href="https://github.com/ni920/ScreenSteps" class="btn btn-secondary" target="_blank" rel="noopener">
-      View on GitHub
-    </a>
+<section class="hero-wrap">
+  <div class="hero-text">
+    <div class="eyebrow">Kostenlose Chrome-Erweiterung · Manifest V3</div>
+    <h1>Dokumentiere alles.<br /><em>Screenshot für Screenshot.</em></h1>
+    <p>
+      ScreenSteps zeichnet Browser-Interaktionen in Echtzeit auf, markiert jeden
+      Klick und jede Eingabe im Screenshot und exportiert daraus eine saubere
+      Schritt-für-Schritt-Dokumentation – vollständig lokal, ohne KI, ohne Cloud.
+    </p>
+    <div class="hero-cta">
+      <a href="https://chromewebstore.google.com" class="btn btn-primary" target="_blank" rel="noopener">
+        ⬇︎ &nbsp;Zu Chrome hinzufügen – kostenlos
+      </a>
+      <a href="https://github.com/ni920/ScreenSteps" class="btn btn-secondary" target="_blank" rel="noopener">
+        Auf GitHub ansehen
+      </a>
+    </div>
   </div>
-  <div class="badge-local">100% local &nbsp;·&nbsp; No account &nbsp;·&nbsp; No cloud</div>
+
+  <!-- CSS-Mockup des Extension-Popups -->
+  <div class="hero-visual" aria-hidden="true">
+    <div class="mockup-glow"></div>
+    <div class="popup-mockup">
+      <div class="popup-header">
+        <div class="popup-brand">
+          <img src="assets/icons/icon48.png" alt="" width="22" height="22" />
+          <span class="popup-eyebrow">ScreenSteps</span>
+        </div>
+        <span class="popup-pill idle">● Bereit</span>
+      </div>
+      <div class="popup-divider"></div>
+      <div class="popup-buttons">
+        <button class="popup-btn primary">Record starten</button>
+        <button class="popup-btn secondary">Verwalten</button>
+      </div>
+      <p class="popup-msg">Bereit für eine neue Aufnahme.</p>
+
+      <!-- Simulierter Screenshot-Schritt -->
+      <div class="popup-step-preview">
+        <div class="step-thumb">
+          <div class="step-thumb-bar"></div>
+          <div class="step-thumb-content">
+            <div class="step-dot"></div>
+          </div>
+        </div>
+        <div class="step-meta">
+          <span class="step-label">Schritt 3 · Klick</span>
+          <span class="step-desc">Button „Speichern" geklickt</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Trust-Leiste ───────────────────────────────────────────────────────── -->
+<div class="trust-bar">
+  <div class="trust-bar-inner">
+    <span class="trust-tag"><span class="trust-icon-no">✕</span> Kein KI-Modell</span>
+    <span class="trust-sep">·</span>
+    <span class="trust-tag"><span class="trust-icon-no">✕</span> Keine Datenweitergabe</span>
+    <span class="trust-sep">·</span>
+    <span class="trust-tag"><span class="trust-icon-no">✕</span> Kein Server</span>
+    <span class="trust-sep">·</span>
+    <span class="trust-tag"><span class="trust-icon-no">✕</span> Kein Account</span>
+    <span class="trust-sep">·</span>
+    <span class="trust-tag"><span class="trust-icon-ok">✓</span> Open Source</span>
+  </div>
+</div>
+
+<!-- ── Kein KI – Hauptsektion ────────────────────────────────────────────── -->
+<section id="no-ai" class="no-ai-section">
+  <div class="no-ai-inner">
+    <div class="no-ai-header">
+      <div class="no-ai-badge">Kein KI. Keine Überraschungen.</div>
+      <h2>Was du dokumentierst,<br />ist was wirklich passiert ist.</h2>
+      <p>
+        Viele Tools nutzen KI-Modelle, um Schritte zu beschreiben – mit all ihren
+        Halluzinationen und Ungenauigkeiten. ScreenSteps liest stattdessen sichtbare
+        Labels, Schaltflächen-Texte und Seitentitel direkt aus der Seite.
+        Präzise. Deterministisch. Ohne Drittanbieter.
+      </p>
+    </div>
+
+    <div class="no-ai-cards">
+      <div class="no-ai-card">
+        <div class="no-ai-icon">🚫</div>
+        <h3>Kein KI-Modell</h3>
+        <p>Keine API-Calls an OpenAI, Gemini oder andere Sprachmodelle. Schrittbeschreibungen werden aus den tatsächlichen UI-Elementen der Seite gebildet.</p>
+      </div>
+      <div class="no-ai-card">
+        <div class="no-ai-icon">📵</div>
+        <h3>Keine Datensammlung</h3>
+        <p>Screenshots, Aufnahmen und Einstellungen verlassen deinen Browser nie. Es gibt keine Telemetrie, kein Tracking, keine Analyse.</p>
+      </div>
+      <div class="no-ai-card">
+        <div class="no-ai-icon">🌐</div>
+        <h3>Kein Server</h3>
+        <p>ScreenSteps funktioniert vollständig offline. Es gibt keinen Backend-Service, keine Cloud-Infrastruktur, keine externe Abhängigkeit.</p>
+      </div>
+    </div>
+
+    <!-- Vergleichstabelle -->
+    <div class="compare-table">
+      <div class="compare-col compare-col-bad">
+        <div class="compare-label bad">Andere Tools</div>
+        <ul>
+          <li>☁️ Cloud-Upload der Screenshots</li>
+          <li>🤖 KI generiert Beschreibungen</li>
+          <li>📊 Nutzungsdaten werden gesammelt</li>
+          <li>💳 Abo oder Account nötig</li>
+          <li>🔌 Offline nicht nutzbar</li>
+        </ul>
+      </div>
+      <div class="compare-col compare-col-good">
+        <div class="compare-label good">ScreenSteps</div>
+        <ul>
+          <li>✅ Alles bleibt lokal auf dem Gerät</li>
+          <li>✅ Echte UI-Labels, keine KI-Texte</li>
+          <li>✅ Null Tracking, null Telemetrie</li>
+          <li>✅ Kostenlos, kein Account</li>
+          <li>✅ Vollständig offline nutzbar</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ── Features ─────────────────────────────────────────────────────────── -->
 <section id="features">
   <div class="section-header">
-    <h2>Everything you need,<br />nothing you don't.</h2>
-    <p>Built for people who document workflows, build tutorials or write SOPs.</p>
+    <h2>Alles was du brauchst,<br />nichts was du nicht brauchst.</h2>
+    <p>Für alle, die Workflows dokumentieren, Tutorials erstellen oder SOPs schreiben.</p>
   </div>
   <div class="features-grid">
     <div class="feature-card">
       <div class="feature-icon">📸</div>
-      <h3>Automatic Screenshots</h3>
-      <p>After every click, form input or page navigation ScreenSteps captures the visible tab — no manual snipping required.</p>
+      <h3>Automatische Screenshots</h3>
+      <p>Nach jedem Klick, jeder Formulareingabe oder Seitennavigation erfasst ScreenSteps den sichtbaren Tab – ganz ohne manuelles Zuschneiden.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">🎯</div>
-      <h3>Visual Annotations</h3>
-      <p>Each screenshot highlights the exact element you interacted with using a coloured dot or rectangle. No guessing where to look.</p>
+      <h3>Visuelle Markierungen</h3>
+      <p>Jeder Screenshot hebt das interagierte Element mit einem farbigen Punkt oder Rahmen hervor. Kein Rätselraten mehr.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">✏️</div>
-      <h3>Editable Steps</h3>
-      <p>Reorder, rename and toggle steps in the built-in manager before exporting. Delete noise, keep signal.</p>
+      <h3>Schritte bearbeiten</h3>
+      <p>Schritte umordnen, umbenennen und deaktivieren – direkt im integrierten Manager, bevor du exportierst.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">📦</div>
-      <h3>Four Export Formats</h3>
-      <p>Markdown ZIP, HTML ZIP, Confluence-ready HTML and a print-to-PDF view — one recording, every format.</p>
+      <h3>Vier Exportformate</h3>
+      <p>Markdown ZIP, HTML ZIP, Confluence-Export und PDF-Druckansicht – eine Aufnahme, jedes Format.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">🌍</div>
-      <h3>German &amp; English</h3>
-      <p>UI language and documentation language are independent settings. Record in English, review in German — or vice versa.</p>
+      <h3>Deutsch &amp; Englisch</h3>
+      <p>UI-Sprache und Dokumentationssprache sind unabhängig einstellbar. Aufnehmen auf Englisch, prüfen auf Deutsch – oder umgekehrt.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">🔒</div>
-      <h3>Fully Local</h3>
-      <p>All data stays in <code>chrome.storage.local</code> on your device. No backend, no analytics, no account.</p>
+      <h3>Vollständig lokal</h3>
+      <p>Alle Daten bleiben in <code>chrome.storage.local</code> auf deinem Gerät. Kein Backend, keine Analyse, kein Account.</p>
     </div>
   </div>
 </section>
@@ -91,24 +202,38 @@
 <!-- ── How it works ──────────────────────────────────────────────────────── -->
 <section id="how">
   <div class="section-header">
-    <h2>Three steps. That's it.</h2>
-    <p>From zero to exportable documentation in under a minute.</p>
+    <h2>Drei Schritte. Das war's.</h2>
+    <p>Von null zur exportierten Dokumentation in unter einer Minute.</p>
   </div>
   <div class="steps">
     <div class="step">
       <div class="step-num">1</div>
-      <h3>Start Recording</h3>
-      <p>Click the ScreenSteps icon in your toolbar and hit <strong>Start</strong>. The extension silently watches in the background.</p>
+      <div class="step-visual sv-start" aria-hidden="true">
+        <div class="sv-icon">▶</div>
+      </div>
+      <h3>Aufnahme starten</h3>
+      <p>ScreenSteps-Icon in der Toolbar anklicken und auf <strong>Starten</strong> drücken. Die Erweiterung läuft still im Hintergrund.</p>
     </div>
     <div class="step">
       <div class="step-num">2</div>
-      <h3>Interact Normally</h3>
-      <p>Click buttons, fill forms, navigate pages. Every meaningful action is captured with a screenshot and a readable description.</p>
+      <div class="step-visual sv-interact" aria-hidden="true">
+        <div class="sv-cursor">↖</div>
+        <div class="sv-lines">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <h3>Normal interagieren</h3>
+      <p>Buttons klicken, Formulare ausfüllen, Seiten navigieren. Jede sinnvolle Aktion wird mit Screenshot und lesbarer Beschreibung festgehalten.</p>
     </div>
     <div class="step">
       <div class="step-num">3</div>
-      <h3>Export &amp; Share</h3>
-      <p>Stop the recording, open the manager, edit if needed and export as Markdown, HTML, Confluence or PDF.</p>
+      <div class="step-visual sv-export" aria-hidden="true">
+        <div class="sv-formats">
+          <span>MD</span><span>HTML</span><span>PDF</span>
+        </div>
+      </div>
+      <h3>Exportieren &amp; teilen</h3>
+      <p>Aufnahme stoppen, Manager öffnen, bei Bedarf bearbeiten und als Markdown, HTML, Confluence oder PDF exportieren.</p>
     </div>
   </div>
 </section>
@@ -116,43 +241,41 @@
 <!-- ── Exports ───────────────────────────────────────────────────────────── -->
 <section id="exports">
   <div class="section-header">
-    <h2>Publish anywhere.</h2>
-    <p>One recording exports to four formats — pick whatever fits your workflow.</p>
+    <h2>Überall veröffentlichen.</h2>
+    <p>Eine Aufnahme, vier Formate – nimm das, was zu deinem Workflow passt.</p>
   </div>
   <div class="exports-grid">
     <div class="export-chip"><span>📝</span> Markdown ZIP</div>
     <div class="export-chip"><span>🌐</span> HTML ZIP</div>
     <div class="export-chip"><span>🔵</span> Confluence Export</div>
-    <div class="export-chip"><span>🖨️</span> PDF (print view)</div>
+    <div class="export-chip"><span>🖨️</span> PDF (Druckansicht)</div>
   </div>
-</section>
-
-<!-- ── Privacy teaser ────────────────────────────────────────────────────── -->
-<section id="privacy-teaser">
-  <h2>Your data stays yours.</h2>
-  <p>
-    ScreenSteps is a purely local extension. It never connects to any server,
-    never stores anything outside your browser, and never tracks anything.
-  </p>
-  <div class="privacy-bullets">
-    <span class="privacy-bullet">No server connections</span>
-    <span class="privacy-bullet">No analytics</span>
-    <span class="privacy-bullet">No account required</span>
-    <span class="privacy-bullet">Screenshots stay on device</span>
-    <span class="privacy-bullet">Open source</span>
-  </div>
-  <a href="privacy.html" class="btn btn-secondary">Read the full Privacy Policy →</a>
 </section>
 
 <!-- ── Footer ────────────────────────────────────────────────────────────── -->
 <footer>
   <p>
     &copy; 2026 ScreenSteps &nbsp;·&nbsp;
-    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Datenschutz</a> &nbsp;·&nbsp;
+    <a href="https://www.nico-saia.com/impressum" target="_blank" rel="noopener">Impressum</a> &nbsp;·&nbsp;
     <a href="https://github.com/ni920/ScreenSteps" target="_blank" rel="noopener">GitHub</a>
   </p>
 </footer>
 
+<script>
+  const burger = document.getElementById('navBurger');
+  const navLinks = document.getElementById('navLinks');
+  burger.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('nav-open');
+    burger.classList.toggle('is-open', open);
+    burger.setAttribute('aria-expanded', open);
+  });
+  function closeNav() {
+    navLinks.classList.remove('nav-open');
+    burger.classList.remove('is-open');
+    burger.setAttribute('aria-expanded', 'false');
+  }
+</script>
 </body>
 </html>
 

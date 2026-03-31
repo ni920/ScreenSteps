@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ScreenSteps",
   "version": "0.1.12",
-  "description": "Record browser interactions step by step, capture screenshots automatically and export visual documentation as Markdown, HTML or PDF.",
+  "description": "Record browser interactions step by step, capture screenshots automatically and export documentation as Markdown, HTML or PDF.",
   "icons": {
     "16": "assets/icons/icon16.png",
     "32": "assets/icons/icon32.png",
@@ -34,6 +34,11 @@
       "matches": [
         "http://*/*",
         "https://*/*"
+      ],
+      "exclude_matches": [
+        "https://chromewebstore.google.com/*",
+        "https://chrome.google.com/webstore/*",
+        "https://chrome.google.com/*"
       ],
       "js": [
         "src/content-script.js"

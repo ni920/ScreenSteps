@@ -505,10 +505,7 @@
 
   function buildHtmlDocument(source, options = {}) {
     const recording = resolveRecording(source);
-    const { autoPrint = false, printMode = false, imageSrcResolver } = options;
-    const autoPrintScript = autoPrint
-      ? `<script>window.addEventListener("load", () => setTimeout(() => window.print(), 320));<\/script>`
-      : "";
+    const { printMode = false, imageSrcResolver } = options;
 
     return `<!doctype html>
 <html lang="${normalizeLanguage(recording?.language)}">
@@ -520,7 +517,6 @@
   </head>
   <body>
     ${buildReportBody(recording, { printMode, imageSrcResolver })}
-    ${autoPrintScript}
   </body>
 </html>`;
   }

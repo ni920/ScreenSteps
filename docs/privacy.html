@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Privacy Policy – ScreenSteps</title>
-  <meta name="description" content="ScreenSteps Privacy Policy – all data stays local on your device." />
+  <title>Datenschutzerklärung – ScreenSteps</title>
+  <meta name="description" content="Datenschutzerklärung von ScreenSteps – alle Daten bleiben lokal auf deinem Gerät." />
   <link rel="icon" type="image/png" sizes="48x48" href="assets/icons/icon48.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -13,108 +13,112 @@
 <!-- ── Nav ──────────────────────────────────────────────────────────────── -->
 <nav>
   <a class="nav-brand" href="index.html">
-    <img src="assets/icons/icon48.png" alt="ScreenSteps icon" />
+    <img src="assets/icons/icon48.png" alt="ScreenSteps Icon" />
     <span>ScreenSteps</span>
   </a>
-  <ul class="nav-links">
-    <li><a href="index.html#features">Features</a></li>
-    <li><a href="index.html#how">How it works</a></li>
-    <li><a href="https://chromewebstore.google.com" class="btn-nav" target="_blank" rel="noopener">Add to Chrome</a></li>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html#features" onclick="closeNav()">Features</a></li>
+    <li><a href="index.html#how" onclick="closeNav()">So funktioniert's</a></li>
+    <li><a href="https://chromewebstore.google.com" class="btn-nav" target="_blank" rel="noopener" onclick="closeNav()">Zu Chrome hinzufügen</a></li>
   </ul>
+  <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="navLinks">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- ── Prose ────────────────────────────────────────────────────────────── -->
 <div class="prose">
-  <a class="back-link" href="index.html">← Back to ScreenSteps</a>
+  <a class="back-link" href="index.html">← Zurück zu ScreenSteps</a>
 
-  <h1>Privacy Policy</h1>
-  <p class="meta">Last updated: March 30, 2026</p>
+  <h1>Datenschutzerklärung</h1>
+  <p class="meta">Stand: 31. März 2026</p>
 
-  <h2>1. Overview</h2>
+  <h2>1. Überblick</h2>
   <p>
-    ScreenSteps is a local Chrome extension. It does <strong>not</strong> collect,
-    transmit or store any personal data on external servers. All data generated
-    during use — recordings, screenshots and settings — remains exclusively on
-    your device inside the Chrome browser's local storage.
+    ScreenSteps ist eine lokale Chrome-Erweiterung. Es werden <strong>keine</strong>
+    personenbezogenen Daten erhoben, übertragen oder auf externen Servern gespeichert.
+    Alle während der Nutzung anfallenden Daten – Aufnahmen, Screenshots und
+    Einstellungen – verbleiben ausschließlich lokal im Chrome-Browser-Speicher deines Geräts.
   </p>
 
-  <h2>2. Data collected and where it is stored</h2>
-  <p>The extension stores the following data locally using <code>chrome.storage.local</code>:</p>
+  <h2>2. Erhobene Daten und Speicherort</h2>
+  <p>Die Erweiterung speichert folgende Daten lokal per <code>chrome.storage.local</code>:</p>
   <ul>
-    <li><strong>Recordings</strong> – step descriptions, timestamps and the URL of each recorded page.</li>
-    <li><strong>Screenshots</strong> – PNG images of the visible browser tab captured at each step.</li>
-    <li><strong>Settings</strong> – your preferred UI language and documentation language.</li>
+    <li><strong>Aufnahmen</strong> – Schritt-Beschreibungen, Zeitstempel und die URL der aufgezeichneten Seite.</li>
+    <li><strong>Screenshots</strong> – PNG-Bilder des sichtbaren Browser-Tabs nach jedem Schritt.</li>
+    <li><strong>Einstellungen</strong> – bevorzugte UI-Sprache und Dokumentationssprache.</li>
   </ul>
   <p>
-    This data never leaves your device. It is not sent to any server, cloud
-    service, analytics platform or third party — ever.
+    Diese Daten verlassen dein Gerät niemals. Sie werden weder an Server noch an
+    Cloud-Dienste, Analyse-Plattformen oder Dritte übermittelt – zu keinem Zeitpunkt.
   </p>
 
-  <h2>3. Permissions explained</h2>
+  <h2>3. Erläuterung der Berechtigungen</h2>
   <ul>
     <li>
-      <strong>activeTab / tabs</strong> – required to identify the currently active
-      tab and capture its title and URL for step descriptions.
+      <strong>activeTab / tabs</strong> – notwendig, um den aktiven Tab zu identifizieren
+      und Titel sowie URL für Schritt-Beschreibungen zu erfassen.
     </li>
     <li>
-      <strong>scripting</strong> – required to inject the content script that listens
-      for clicks, inputs and navigations on the page you are recording.
+      <strong>scripting</strong> – notwendig, um das Content Script einzuschleusen,
+      das Klicks, Eingaben und Navigationen auf der aufgezeichneten Seite erkennt.
     </li>
     <li>
-      <strong>storage / unlimitedStorage</strong> – required to persist recordings
-      and screenshots locally in <code>chrome.storage.local</code>.
+      <strong>storage / unlimitedStorage</strong> – notwendig, um Aufnahmen und
+      Screenshots lokal in <code>chrome.storage.local</code> zu speichern.
     </li>
     <li>
-      <strong>downloads</strong> – required to trigger ZIP and HTML file downloads
-      when you export a recording.
+      <strong>downloads</strong> – notwendig, um ZIP- und HTML-Datei-Downloads beim
+      Export einer Aufnahme auszulösen.
     </li>
     <li>
-      <strong>host_permissions (http://*/* and https://*/*)</strong> – required so
-      the content script can run on any website the user actively chooses to
-      record. ScreenSteps only activates on a page when you explicitly start a
-      recording. No background monitoring takes place.
+      <strong>host_permissions (http://*/* und https://*/*)</strong> – notwendig, damit
+      das Content Script auf beliebigen Webseiten aktiv werden kann, die der Nutzer
+      explizit aufzeichnet. ScreenSteps wird nur aktiv, wenn eine Aufnahme bewusst
+      gestartet wird. Eine Hintergrundüberwachung findet nicht statt.
     </li>
   </ul>
 
-  <h2>4. No tracking, no analytics</h2>
+  <h2>4. Kein Tracking, keine Analyse</h2>
   <p>
-    ScreenSteps does not use any analytics SDK, crash reporter, A/B testing
-    framework or advertising library. There are no cookies, no fingerprinting
-    and no network requests of any kind originating from the extension.
+    ScreenSteps verwendet keinerlei Analyse-SDKs, Crash-Reporter, A/B-Test-Frameworks
+    oder Werbe-Bibliotheken. Es gibt keine Cookies, kein Fingerprinting und keine
+    Netzwerkanfragen, die von der Erweiterung ausgehen.
   </p>
 
-  <h2>5. Data sharing</h2>
+  <h2>5. Weitergabe von Daten</h2>
   <p>
-    No data is shared with any third party because no data leaves your device.
-    Exports (Markdown, HTML, PDF) are files you create yourself and choose
-    to share; ScreenSteps has no involvement after a file is saved to your
-    Downloads folder.
+    Es werden keine Daten an Dritte weitergegeben, da keine Daten das Gerät verlassen.
+    Exporte (Markdown, HTML, PDF) sind Dateien, die du selbst erstellst und nach eigenem
+    Ermessen teilst. ScreenSteps hat nach dem Speichern einer Datei im Download-Ordner
+    keinen Einfluss darauf.
   </p>
 
-  <h2>6. Data retention and deletion</h2>
+  <h2>6. Datenspeicherung und -löschung</h2>
   <p>
-    Recordings are stored until you delete them manually via the ScreenSteps
-    manager. Uninstalling the extension from Chrome removes all associated
-    storage automatically.
+    Aufnahmen werden gespeichert, bis du sie manuell über den ScreenSteps-Manager löschst.
+    Beim Deinstallieren der Erweiterung aus Chrome wird der zugehörige Speicher automatisch
+    entfernt.
   </p>
 
-  <h2>7. Children's privacy</h2>
+  <h2>7. Minderjährige</h2>
   <p>
-    ScreenSteps does not collect personal information from anyone, including
-    children under the age of 13.
+    ScreenSteps erhebt keinerlei personenbezogene Daten von Personen
+    jedweden Alters, einschließlich Minderjähriger.
   </p>
 
-  <h2>8. Changes to this policy</h2>
+  <h2>8. Änderungen dieser Erklärung</h2>
   <p>
-    If this policy changes, the updated version will be published at this URL
-    with a new "Last updated" date. Continued use of the extension after a
-    change constitutes acceptance of the revised policy.
+    Änderungen dieser Datenschutzerklärung werden unter dieser URL mit aktualisiertem
+    Datum veröffentlicht. Die weitere Nutzung der Erweiterung nach einer Änderung gilt
+    als Zustimmung zur aktualisierten Erklärung.
   </p>
 
-  <h2>9. Contact</h2>
+  <h2>9. Kontakt</h2>
   <p>
-    Questions about this privacy policy can be directed via
-    <a href="https://github.com/ni920/ScreenSteps/issues" target="_blank" rel="noopener">GitHub Issues</a>.
+    Fragen zur Datenschutzerklärung können über
+    <a href="https://github.com/ni920/ScreenSteps/issues" target="_blank" rel="noopener">GitHub Issues</a>
+    oder über das <a href="https://www.nico-saia.com/impressum" target="_blank" rel="noopener">Impressum</a> gestellt werden.
   </p>
 </div>
 
@@ -122,11 +126,26 @@
 <footer>
   <p>
     &copy; 2026 ScreenSteps &nbsp;·&nbsp;
-    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Datenschutz</a> &nbsp;·&nbsp;
+    <a href="https://www.nico-saia.com/impressum" target="_blank" rel="noopener">Impressum</a> &nbsp;·&nbsp;
     <a href="https://github.com/ni920/ScreenSteps" target="_blank" rel="noopener">GitHub</a>
   </p>
 </footer>
 
+<script>
+  const burger = document.getElementById('navBurger');
+  const navLinks = document.getElementById('navLinks');
+  burger.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('nav-open');
+    burger.classList.toggle('is-open', open);
+    burger.setAttribute('aria-expanded', open);
+  });
+  function closeNav() {
+    navLinks.classList.remove('nav-open');
+    burger.classList.remove('is-open');
+    burger.setAttribute('aria-expanded', 'false');
+  }
+</script>
 </body>
 </html>
 
