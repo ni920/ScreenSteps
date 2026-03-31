@@ -8,7 +8,6 @@
     <img src="https://img.shields.io/badge/Manifest-V3-0f766e?style=flat-square" alt="Manifest V3" />
     <img src="https://img.shields.io/badge/Kein%20KI-100%25%20lokal-16a34a?style=flat-square" alt="Kein KI" />
     <img src="https://img.shields.io/badge/Kein%20Server-Offline%20nutzbar-16a34a?style=flat-square" alt="Kein Server" />
-    <img src="https://img.shields.io/badge/Open%20Source-MIT-5e7468?style=flat-square" alt="Open Source" />
   </p>
 
   <p>
