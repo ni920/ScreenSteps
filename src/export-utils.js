@@ -3,15 +3,15 @@
     de: {
       languageName: "Deutsch",
       reportTitle: "Ablauf auf",
-      lead: "Klare Schrittfolge mit markierten Screenshots fuer Doku, Support und SOPs.",
-      hint: "Dieser Report kann direkt als HTML gespeichert oder ueber den Browser als PDF gedruckt werden.",
+      lead: "Klare Schrittfolge mit markierten Screenshots für Doku, Support und SOPs.",
+      hint: "Dieser Report kann direkt als HTML gespeichert oder über den Browser als PDF gedruckt werden.",
       steps: "Schritte",
       start: "Start",
       end: "Ende",
       startPage: "Startseite",
       lastPage: "Letzte Seite",
       noSteps: "Keine aufgezeichneten Schritte vorhanden.",
-      noScreenshot: "Kein Screenshot verfuegbar",
+      noScreenshot: "Kein Screenshot verfügbar",
       stepLabel: "Schritt",
       value: "Wert",
       status: "Status",
@@ -21,15 +21,15 @@
       exportedMarkdownMessage: "Markdown-ZIP",
       exportedHtmlMessage: "HTML-ZIP",
       exportedConfluenceMessage: "Confluence-HTML",
-      confluenceTitle: "Confluence Export fuer",
-      confluenceLead: "Bereinigt fuer Copy-Paste nach Confluence mit eingebetteten Screenshots.",
+      confluenceTitle: "Confluence Export für",
+      confluenceLead: "Bereinigt für Copy-Paste nach Confluence mit eingebetteten Screenshots.",
       confluenceHint:
-        "Oeffne diese Datei im Browser und kopiere den Inhalt in eine Confluence-Seite. Die Struktur ist bewusst schlicht gehalten.",
+        "Öffne diese Datei im Browser und kopiere den Inhalt in eine Confluence-Seite. Die Struktur ist bewusst schlicht gehalten.",
       confluenceHowToTitle: "So nutzt du den Export",
       confluenceHowToSteps: [
-        "Datei im Browser oeffnen",
+        "Datei im Browser öffnen",
         "Den eigentlichen Report-Inhalt markieren und kopieren",
-        "In den Confluence-Editor einfuegen"
+        "In den Confluence-Editor einfügen"
       ]
     },
     en: {
@@ -180,8 +180,82 @@
     return `${buildExportBaseName(source)}.${extension}`;
   }
 
+  function buildRecordingFileName(source) {
+    return `${buildExportBaseName(source)}.screensteps`;
+  }
+
   function getScreenshotMap(recording) {
     return new Map((recording?.screenshots || []).map((item) => [item.name, item]));
+  }
+
+  function sanitizeTransferStep(step, index) {
+    if (!step || typeof step !== "object") {
+      return null;
+    }
+
+    const cleanedStep = {
+      step: Number.isInteger(step.step) ? step.step : index + 1,
+      action: step.action || "click",
+      description: step.description || step.label || "Interaction",
+      label: step.label || "",
+      selector: step.selector || "",
+      xpath: step.xpath || "",
+      attributes: {
+        id: step.attributes?.id || "",
+        name: step.attributes?.name || "",
+        "aria-label": step.attributes?.["aria-label"] || "",
+        role: step.attributes?.role || "",
+        type: step.attributes?.type || "",
+        placeholder: step.attributes?.placeholder || "",
+        href: step.attributes?.href || "",
+        "data-testid": step.attributes?.["data-testid"] || ""
+      },
+      url: step.url || "",
+      timestamp: step.timestamp || new Date().toISOString(),
+      screenshot: step.screenshot || null
+    };
+
+    if (step.value_preview !== undefined) {
+      cleanedStep.value_preview = step.value_preview;
+    }
+
+    if (typeof step.checked === "boolean") {
+      cleanedStep.checked = step.checked;
+    }
+
+    return cleanedStep;
+  }
+
+  function sanitizeTransferScreenshot(screenshot) {
+    if (!screenshot || typeof screenshot !== "object" || !screenshot.name || !screenshot.data_url) {
+      return null;
+    }
+
+    return {
+      name: String(screenshot.name),
+      mime_type: screenshot.mime_type || "image/jpeg",
+      data_url: String(screenshot.data_url)
+    };
+  }
+
+  function buildTransferRecording(source) {
+    const recording = resolveRecording(source);
+
+    if (!recording) {
+      return null;
+    }
+
+    return {
+      id: recording.id || "",
+      language: normalizeLanguage(recording.language),
+      started_at: recording.started_at || new Date().toISOString(),
+      ended_at: recording.ended_at || recording.started_at || new Date().toISOString(),
+      initial_url: recording.initial_url || recording.current_url || "",
+      current_url: recording.current_url || recording.initial_url || "",
+      page_title: recording.page_title || "",
+      steps: (recording.steps || []).map(sanitizeTransferStep).filter(Boolean),
+      screenshots: (recording.screenshots || []).map(sanitizeTransferScreenshot).filter(Boolean)
+    };
   }
 
   function buildStepNote(step, copy) {
@@ -708,6 +782,168 @@
 </html>`;
   }
 
+  function buildClipboardHtml(source) {
+    const recording = resolveRecording(source);
+    const copy = getCopy(recording);
+    const steps = recording?.steps || [];
+    const screenshotMap = getScreenshotMap(recording);
+    const title = buildDisplayTitle(recording);
+    const metaCards = [
+      { label: copy.steps, value: String(steps.length) },
+      { label: copy.start, value: formatTimestamp(recording?.started_at, recording) },
+      { label: copy.end, value: formatTimestamp(recording?.ended_at, recording) },
+      { label: copy.startPage, value: shortenUrl(recording?.initial_url || "-") },
+      { label: copy.lastPage, value: shortenUrl(recording?.current_url || recording?.initial_url || "-") }
+    ];
+    const metaMarkup = metaCards
+      .map(
+        (item) => `
+          <td style="padding:0 12px 12px 0;vertical-align:top;">
+            <div style="padding:12px 14px;border:1px solid #d9e4de;border-radius:14px;background:#f8fbf9;">
+              <div style="font-size:12px;line-height:1.4;color:#5f7369;">${escapeHtml(item.label)}</div>
+              <div style="margin-top:4px;font-size:14px;line-height:1.45;font-weight:700;color:#173529;word-break:break-word;">${escapeHtml(
+                item.value
+              )}</div>
+            </div>
+          </td>
+        `
+      )
+      .join("");
+    const stepsMarkup =
+      steps.length > 0
+        ? steps
+            .map((step) => {
+              const screenshot = screenshotMap.get(step.screenshot);
+              const note = buildStepNote(step, copy);
+              const noteMarkup = note
+                ? `<div style="margin-top:8px;font-size:14px;line-height:1.5;color:#5f7369;">${escapeHtml(note)}</div>`
+                : "";
+              const imageMarkup = screenshot?.data_url
+                ? `
+                  <img
+                    src="${escapeHtml(screenshot.data_url)}"
+                    alt="${escapeHtml(`${copy.stepLabel} ${step.step}`)}"
+                    style="display:block;width:100%;max-width:100%;margin-top:14px;border:1px solid #d9e4de;border-radius:14px;background:#f3f7f5;"
+                  />
+                `
+                : "";
+
+              return `
+                <div style="margin-top:18px;padding:18px;border:1px solid #d9e4de;border-radius:18px;background:#ffffff;">
+                  <div style="font-size:12px;line-height:1.4;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#5f7369;">
+                    ${escapeHtml(copy.stepLabel)} ${step.step} · ${escapeHtml(step.action || "step")}
+                  </div>
+                  <div style="margin-top:8px;font-size:22px;line-height:1.3;font-weight:700;color:#173529;">
+                    ${escapeHtml(step.description || "Interaction")}
+                  </div>
+                  ${noteMarkup}
+                  ${imageMarkup}
+                </div>
+              `;
+            })
+            .join("")
+        : `
+          <div style="margin-top:18px;padding:20px;border:1px dashed #d9e4de;border-radius:18px;background:#ffffff;color:#5f7369;">
+            ${escapeHtml(copy.noSteps)}
+          </div>
+        `;
+
+    return `
+      <div style="font-family:'Segoe UI',Arial,sans-serif;color:#173529;background:#f7f4eb;padding:24px;">
+        <div style="max-width:840px;margin:0 auto;">
+          <div style="font-size:12px;line-height:1.4;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#5f7369;">ScreenSteps</div>
+          <div style="margin-top:8px;font-size:32px;line-height:1.15;font-weight:800;color:#173529;">
+            ${escapeHtml(copy.reportTitle)} ${escapeHtml(title)}
+          </div>
+          <div style="margin-top:10px;font-size:15px;line-height:1.55;color:#5f7369;">
+            ${escapeHtml(copy.lead)}
+          </div>
+          <table role="presentation" style="width:100%;margin-top:18px;border-collapse:collapse;">
+            <tr>${metaMarkup}</tr>
+          </table>
+          ${stepsMarkup}
+        </div>
+      </div>
+    `.trim();
+  }
+
+  function buildClipboardText(source) {
+    const recording = resolveRecording(source);
+    const copy = getCopy(recording);
+    const steps = recording?.steps || [];
+    const lines = [
+      `ScreenSteps - ${buildDisplayTitle(recording)}`,
+      "",
+      `${copy.start}: ${formatTimestamp(recording?.started_at, recording)}`,
+      `${copy.end}: ${formatTimestamp(recording?.ended_at, recording)}`,
+      `${copy.steps}: ${steps.length}`,
+      `${copy.startPage}: ${shortenUrl(recording?.initial_url || "-")}`,
+      `${copy.lastPage}: ${shortenUrl(recording?.current_url || recording?.initial_url || "-")}`,
+      ""
+    ];
+
+    for (const step of steps) {
+      const note = buildStepNote(step, copy);
+      lines.push(`${copy.stepLabel} ${step.step}: ${step.description || "Interaction"}`);
+      if (note) {
+        lines.push(note);
+      }
+      lines.push("");
+    }
+
+    return lines.join("\n").trim();
+  }
+
+  async function legacyCopyToClipboard(html, text) {
+    if (typeof document === "undefined" || typeof document.execCommand !== "function") {
+      throw new Error("Clipboard access is not available.");
+    }
+
+    return new Promise((resolve, reject) => {
+      const listener = (event) => {
+        event.preventDefault();
+        event.clipboardData?.setData("text/html", html);
+        event.clipboardData?.setData("text/plain", text);
+      };
+
+      document.addEventListener("copy", listener, { once: true });
+      const successful = document.execCommand("copy");
+      document.removeEventListener("copy", listener);
+
+      if (successful) {
+        resolve();
+      } else {
+        reject(new Error("Clipboard access failed."));
+      }
+    });
+  }
+
+  async function copyRecordingToClipboard(source) {
+    const recording = resolveRecording(source);
+
+    if (!recording) {
+      throw new Error("Keine Aufnahme zum Kopieren vorhanden.");
+    }
+
+    const html = buildClipboardHtml(recording);
+    const text = buildClipboardText(recording);
+
+    if (
+      typeof navigator !== "undefined" &&
+      navigator.clipboard?.write &&
+      typeof globalThis.ClipboardItem === "function"
+    ) {
+      const item = new globalThis.ClipboardItem({
+        "text/html": new Blob([html], { type: "text/html" }),
+        "text/plain": new Blob([text], { type: "text/plain" })
+      });
+      await navigator.clipboard.write([item]);
+      return;
+    }
+
+    await legacyCopyToClipboard(html, text);
+  }
+
   function buildMarkdownDocument(source) {
     const recording = resolveRecording(source);
     const copy = getCopy(recording);
@@ -1022,14 +1258,52 @@
     };
   }
 
+  function buildRecordingTransferPayload(source) {
+    const recording = buildTransferRecording(source);
+
+    if (!recording) {
+      return null;
+    }
+
+    return {
+      format: "screensteps-recording",
+      format_version: 1,
+      exported_at: new Date().toISOString(),
+      recording
+    };
+  }
+
+  async function downloadRecordingFile(source) {
+    const payload = buildRecordingTransferPayload(source);
+
+    if (!payload?.recording) {
+      throw new Error("Keine Aufnahme zum Exportieren vorhanden.");
+    }
+
+    const fileName = buildRecordingFileName(payload.recording);
+    const blob = new Blob([JSON.stringify(payload)], {
+      type: "application/vnd.screensteps.recording+json;charset=utf-8"
+    });
+
+    await downloadBlob(blob, fileName);
+
+    return {
+      fileName
+    };
+  }
+
   globalThis.UiRecorderExportUtils = {
+    buildClipboardHtml,
     buildFileName,
+    buildRecordingTransferPayload,
     buildConfluenceReadyDocument,
     buildHtmlDocument,
     buildMarkdownDocument,
+    copyRecordingToClipboard,
     downloadConfluenceReadyHtml,
     downloadMarkdownZip,
     downloadHtmlZip,
+    downloadRecordingFile,
     downloadMarkdownBundle: downloadMarkdownZip,
     getLanguageLabel,
     normalizeLanguage,

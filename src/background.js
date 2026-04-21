@@ -1,8 +1,14 @@
 const STORAGE_KEY = "uiRecorderState";
 const CAPTURE_OPTIONS = { format: "jpeg", quality: 72 };
 const CLICK_CAPTURE_DELAY_MS = 160;
+const LINK_CLICK_CAPTURE_DELAY_MS = 40;
 const NAVIGATION_CAPTURE_DELAY_MS = 260;
+const NAVIGATION_CAPTURE_RETRY_DELAY_MS = 320;
+const NAVIGATION_CAPTURE_MAX_ATTEMPTS = 4;
 const START_CAPTURE_DELAY_MS = 90;
+const DEFAULT_CAPTURE_RETRY_DELAY_MS = 420;
+const DEFAULT_CAPTURE_MAX_ATTEMPTS = 3;
+const CAPTURE_MIN_INTERVAL_MS = 650;
 const DEDUPE_WINDOW_MS = 700;
 const PRE_CAPTURE_PREPARE_DELAY_MS = 60;
 const BADGE_COLOR = "#c2410c";
@@ -13,7 +19,7 @@ const SUPPORTED_URL_PATTERN = /^https?:\/\//i;
 
 const SESSION_COPY = {
   de: {
-    start: (label) => (label ? `Seite '${label}' geoeffnet` : "Aufzeichnung gestartet"),
+    start: (label) => (label ? `Seite '${label}' geöffnet` : "Aufzeichnung gestartet"),
     navigation: (label) => `Navigation zu ${label}`
   },
   en: {
@@ -24,15 +30,16 @@ const SESSION_COPY = {
 
 const UI_COPY = {
   de: {
-    alreadyRecording: "Es laeuft bereits eine Aufnahme. Bitte stoppe sie zuerst.",
-    noActiveTab: "Kein aktiver Tab verfuegbar.",
+    alreadyRecording: "Es läuft bereits eine Aufnahme. Bitte stoppe sie zuerst.",
+    noActiveTab: "Kein aktiver Tab verfügbar.",
     unsupportedUrl: "Bitte starte das Recording auf einer normalen http(s)-Webseite.",
     activationFailed: "Recording konnte auf dieser Seite nicht aktiviert werden.",
     cannotClearWhileRecording: "Eine laufende Aufnahme kann nicht geleert werden.",
-    missingRecordingId: "Keine Recording-ID uebergeben.",
+    missingRecordingId: "Keine Recording-ID übergeben.",
     cannotDeleteActiveRecording: "Die laufende Aufnahme kann nicht gelöscht werden.",
     cannotEditActiveRecording: "Eine laufende Aufnahme kann nicht bearbeitet werden.",
     recordingNotFound: "Recording wurde nicht gefunden.",
+    invalidImportFile: "Die Datei ist kein gültiger ScreenSteps-Ablauf.",
     trackedTabClosed: "Die aufgezeichnete Registerkarte wurde geschlossen.",
     tabSwitchStoppedRecording: "Die Aufnahme wurde beendet, weil du zu einem anderen Tab gewechselt hast."
   },
@@ -46,6 +53,7 @@ const UI_COPY = {
     cannotDeleteActiveRecording: "The active recording cannot be deleted.",
     cannotEditActiveRecording: "An active recording cannot be edited.",
     recordingNotFound: "Recording could not be found.",
+    invalidImportFile: "The file is not a valid ScreenSteps flow.",
     trackedTabClosed: "The recorded tab was closed.",
     tabSwitchStoppedRecording: "The recording was stopped because you switched to another tab."
   }
@@ -53,6 +61,8 @@ const UI_COPY = {
 
 let stateCache = null;
 let stateQueue = Promise.resolve();
+let captureQueue = Promise.resolve();
+let lastCaptureAt = 0;
 
 function normalizeLanguage(language) {
   return language === "en" ? "en" : "de";
@@ -517,23 +527,85 @@ async function sendCaptureMessage(tabId, type) {
   }
 }
 
-async function captureScreenshot(windowId, stepNumber, expectedTabId = null) {
+async function resolveMarkerForPayload(tabId, payload = {}) {
+  if (!tabId || !payload?.marker) {
+    return payload?.marker || null;
+  }
+
   try {
-    if (!(await isExpectedTabActive(windowId, expectedTabId))) {
+    const response = await chrome.tabs.sendMessage(tabId, {
+      type: "recorder:resolve-marker",
+      payload
+    });
+    return response?.marker || payload.marker;
+  } catch (error) {
+    console.warn("Marker resolution failed:", error);
+    return payload.marker;
+  }
+}
+
+function queueCapture(task) {
+  const run = captureQueue.then(task, task);
+  captureQueue = run.catch(() => {});
+  return run;
+}
+
+async function waitForCaptureSlot() {
+  const waitTime = lastCaptureAt + CAPTURE_MIN_INTERVAL_MS - Date.now();
+  if (waitTime > 0) {
+    await sleep(waitTime);
+  }
+
+  lastCaptureAt = Date.now();
+}
+
+async function captureScreenshot(windowId, stepNumber, expectedTabId = null) {
+  return queueCapture(async () => {
+    try {
+      if (!(await isExpectedTabActive(windowId, expectedTabId))) {
+        return null;
+      }
+
+      await sendCaptureMessage(expectedTabId, "recorder:prepare-capture");
+      await sleep(PRE_CAPTURE_PREPARE_DELAY_MS);
+
+      if (!(await isExpectedTabActive(windowId, expectedTabId))) {
+        return null;
+      }
+
+      await waitForCaptureSlot();
+      const dataUrl = await chrome.tabs.captureVisibleTab(windowId, CAPTURE_OPTIONS);
+      return buildScreenshotAsset(stepNumber, dataUrl);
+    } catch (error) {
+      console.warn("Screenshot capture failed:", error);
       return null;
+    } finally {
+      await sendCaptureMessage(expectedTabId, "recorder:finish-capture");
+    }
+  });
+}
+
+async function captureScreenshotWithRetry(
+  windowId,
+  stepNumber,
+  expectedTabId = null,
+  { attempts = 1, retryDelayMs = 0 } = {}
+) {
+  const totalAttempts = Math.max(1, attempts);
+  const delay = Math.max(0, retryDelayMs);
+
+  for (let attempt = 1; attempt <= totalAttempts; attempt += 1) {
+    const screenshot = await captureScreenshot(windowId, stepNumber, expectedTabId);
+    if (screenshot) {
+      return screenshot;
     }
 
-    await sendCaptureMessage(expectedTabId, "recorder:prepare-capture");
-    await sleep(PRE_CAPTURE_PREPARE_DELAY_MS);
-
-    const dataUrl = await chrome.tabs.captureVisibleTab(windowId, CAPTURE_OPTIONS);
-    return buildScreenshotAsset(stepNumber, dataUrl);
-  } catch (error) {
-    console.warn("Screenshot capture failed:", error);
-    return null;
-  } finally {
-    await sendCaptureMessage(expectedTabId, "recorder:finish-capture");
+    if (attempt < totalAttempts && delay > 0) {
+      await sleep(delay * attempt);
+    }
   }
+
+  return null;
 }
 
 function getUrlLabel(url) {
@@ -585,7 +657,10 @@ async function appendStartStep(session) {
   session.next_step_number += 1;
 
   await sleep(START_CAPTURE_DELAY_MS);
-  const screenshot = await captureScreenshot(session.windowId, stepNumber, session.tabId);
+  const screenshot = await captureScreenshotWithRetry(session.windowId, stepNumber, session.tabId, {
+    attempts: DEFAULT_CAPTURE_MAX_ATTEMPTS,
+    retryDelayMs: DEFAULT_CAPTURE_RETRY_DELAY_MS
+  });
 
   session.steps.push({
     step: stepNumber,
@@ -793,6 +868,96 @@ async function updateRecording(recordingId, payload = {}) {
   return buildLibraryResponse(state);
 }
 
+function hasRecordingId(state, recordingId) {
+  if (!recordingId) {
+    return false;
+  }
+
+  return Boolean(
+    state.session?.id === recordingId || state.recordings.some((recording) => recording.id === recordingId)
+  );
+}
+
+function buildImportedRecordingId(state, preferredId) {
+  const baseId =
+    typeof preferredId === "string" && preferredId.trim() ? preferredId.trim() : `session-${Date.now()}`;
+
+  if (!hasRecordingId(state, baseId)) {
+    return baseId;
+  }
+
+  let suffix = 2;
+  let candidate = `${baseId}-import-${suffix}`;
+
+  while (hasRecordingId(state, candidate)) {
+    suffix += 1;
+    candidate = `${baseId}-import-${suffix}`;
+  }
+
+  return candidate;
+}
+
+function extractImportedRecording(fileContent) {
+  if (typeof fileContent !== "string" || !fileContent.trim()) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(fileContent);
+
+    if (parsed?.format === "screensteps-recording" && parsed.recording && typeof parsed.recording === "object") {
+      return parsed.recording;
+    }
+
+    if (parsed?.recording && typeof parsed.recording === "object") {
+      return parsed.recording;
+    }
+
+    if (parsed && typeof parsed === "object" && (Array.isArray(parsed.steps) || Array.isArray(parsed.screenshots))) {
+      return parsed;
+    }
+  } catch (error) {
+    return null;
+  }
+
+  return null;
+}
+
+async function importRecording(fileContent) {
+  const state = await readState();
+  const uiCopy = getUiCopy(state.preferences.ui_language);
+  const importedSource = extractImportedRecording(fileContent);
+
+  if (!importedSource) {
+    throw new Error(uiCopy.invalidImportFile);
+  }
+
+  const importedRecording = normalizeSession({
+    ...clonePlain(importedSource),
+    id: buildImportedRecordingId(state, importedSource.id),
+    tabId: null,
+    windowId: null,
+    steps: normalizeEditableSteps(importedSource.steps || []),
+    ended_at: importedSource.ended_at || importedSource.started_at || new Date().toISOString(),
+    pending_navigation_url: "",
+    last_event_signature: "",
+    last_event_at: 0
+  });
+
+  if (!importedRecording) {
+    throw new Error(uiCopy.invalidImportFile);
+  }
+
+  state.error = "";
+  state.recordings = sortRecordings([importedRecording, ...state.recordings]);
+  await saveState(state);
+
+  return {
+    library: buildLibraryResponse(state),
+    recording: buildSessionResponse(importedRecording)
+  };
+}
+
 async function updatePreferences(input = {}) {
   const state = await readState();
   const nextPreferences =
@@ -857,10 +1022,17 @@ async function appendTrackedStep(sender, payload) {
   const stepNumber = state.session.next_step_number;
   state.session.next_step_number += 1;
 
-  await sleep(CLICK_CAPTURE_DELAY_MS);
-  const screenshot = await captureScreenshot(state.session.windowId, stepNumber, state.session.tabId);
+  const captureDelayMs =
+    payload.action === "click" && payload.attributes?.href ? LINK_CLICK_CAPTURE_DELAY_MS : CLICK_CAPTURE_DELAY_MS;
+
+  await sleep(captureDelayMs);
+  const resolvedMarker = await resolveMarkerForPayload(state.session.tabId, payload);
+  const screenshot = await captureScreenshotWithRetry(state.session.windowId, stepNumber, state.session.tabId, {
+    attempts: DEFAULT_CAPTURE_MAX_ATTEMPTS,
+    retryDelayMs: DEFAULT_CAPTURE_RETRY_DELAY_MS
+  });
   const annotatedScreenshot =
-    screenshot && payload.marker ? await annotateScreenshot(screenshot, payload.marker) : screenshot;
+    screenshot && resolvedMarker ? await annotateScreenshot(screenshot, resolvedMarker) : screenshot;
   const step = sanitizeStepPayload(payload);
   step.step = stepNumber;
   step.screenshot = annotatedScreenshot ? annotatedScreenshot.name : null;
@@ -896,7 +1068,10 @@ async function appendNavigationStep(tabId, tabUrl, tabTitle) {
   const destinationLabel = tabTitle || getUrlLabel(nextUrl);
 
   await sleep(NAVIGATION_CAPTURE_DELAY_MS);
-  const screenshot = await captureScreenshot(state.session.windowId, stepNumber, state.session.tabId);
+  const screenshot = await captureScreenshotWithRetry(state.session.windowId, stepNumber, state.session.tabId, {
+    attempts: NAVIGATION_CAPTURE_MAX_ATTEMPTS,
+    retryDelayMs: NAVIGATION_CAPTURE_RETRY_DELAY_MS
+  });
 
   state.session.steps.push({
     step: stepNumber,
@@ -918,6 +1093,37 @@ async function appendNavigationStep(tabId, tabUrl, tabTitle) {
   state.session.current_url = nextUrl;
   state.session.pending_navigation_url = "";
   await saveState(state);
+}
+
+async function handleSameDocumentNavigation(details) {
+  if (!details || details.frameId !== 0) {
+    return;
+  }
+
+  const state = await readState();
+
+  if (state.status !== "recording" || !state.session || state.session.tabId !== details.tabId) {
+    return;
+  }
+
+  const nextUrl = details.url || "";
+  if (!nextUrl || nextUrl === state.session.current_url) {
+    return;
+  }
+
+  state.session.pending_navigation_url = nextUrl;
+  await saveState(state);
+
+  let tabTitle = state.session.page_title;
+
+  try {
+    const tab = await chrome.tabs.get(details.tabId);
+    tabTitle = tab?.title || tabTitle;
+  } catch (error) {
+    console.warn("Unable to resolve tab title for same-document navigation:", error);
+  }
+
+  await appendNavigationStep(details.tabId, nextUrl, tabTitle);
 }
 
 async function handleTabUpdated(tabId, changeInfo, tab) {
@@ -971,6 +1177,70 @@ async function handleTabRemoved(tabId) {
   await syncBadge(state);
 }
 
+async function adoptOpenedTab(state, activeInfo) {
+  if (
+    state.status !== "recording" ||
+    !state.session ||
+    activeInfo.windowId !== state.session.windowId ||
+    activeInfo.tabId === state.session.tabId
+  ) {
+    return false;
+  }
+
+  let activatedTab = null;
+
+  try {
+    activatedTab = await chrome.tabs.get(activeInfo.tabId);
+  } catch (error) {
+    console.warn("Unable to inspect activated tab:", error);
+    return false;
+  }
+
+  if (!activatedTab?.id || activatedTab.windowId !== state.session.windowId) {
+    return false;
+  }
+
+  const nextUrl = activatedTab.pendingUrl || activatedTab.url || "";
+  const shouldAdopt =
+    activatedTab.openerTabId === state.session.tabId && (!nextUrl || isSupportedUrl(nextUrl));
+
+  if (!shouldAdopt) {
+    return false;
+  }
+
+  const previousTabId = state.session.tabId;
+  state.session.tabId = activatedTab.id;
+  state.session.windowId = activatedTab.windowId;
+  state.session.page_title = activatedTab.title || state.session.page_title;
+
+  if (nextUrl && nextUrl !== state.session.current_url) {
+    state.session.pending_navigation_url = nextUrl;
+  }
+
+  state.error = "";
+  await saveState(state);
+
+  try {
+    await notifyTab(previousTabId, false, state.session.language);
+  } catch (error) {
+    console.warn("Unable to disable recording in previous tab:", error);
+  }
+
+  if (activatedTab.status === "complete" && nextUrl) {
+    await appendNavigationStep(activatedTab.id, nextUrl, activatedTab.title || state.session.page_title);
+  }
+
+  if (isSupportedUrl(nextUrl)) {
+    try {
+      await notifyTab(activatedTab.id, true, state.session.language);
+    } catch (error) {
+      console.warn("Unable to enable recording in adopted tab:", error);
+    }
+  }
+
+  return true;
+}
+
 async function handleTabActivated(activeInfo) {
   const state = await readState();
 
@@ -980,6 +1250,10 @@ async function handleTabActivated(activeInfo) {
     activeInfo.windowId !== state.session.windowId ||
     activeInfo.tabId === state.session.tabId
   ) {
+    return;
+  }
+
+  if (await adoptOpenedTab(state, activeInfo)) {
     return;
   }
 
@@ -1041,6 +1315,11 @@ async function handleMessage(message, sender) {
         ok: true,
         library: await queueStateChange(() => updateRecording(message.recordingId, message.payload || {}))
       };
+    case "recorder:import-recording":
+      return {
+        ok: true,
+        ...(await queueStateChange(() => importRecording(message.fileContent)))
+      };
     case "recorder:track-step":
       return {
         ok: true,
@@ -1092,6 +1371,14 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
   void queueStateChange(() => handleTabActivated(activeInfo));
+});
+
+chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
+  void queueStateChange(() => handleSameDocumentNavigation(details));
+});
+
+chrome.webNavigation.onReferenceFragmentUpdated.addListener((details) => {
+  void queueStateChange(() => handleSameDocumentNavigation(details));
 });
 
 void queueStateChange(async () => {

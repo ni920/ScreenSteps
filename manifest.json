@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ScreenSteps",
-  "version": "0.1.12",
+  "version": "0.1.19",
   "description": "Record browser interactions step by step, capture screenshots automatically and export documentation as Markdown, HTML or PDF.",
   "icons": {
     "16": "assets/icons/icon16.png",
@@ -15,11 +15,11 @@
     "scripting",
     "storage",
     "tabs",
-    "unlimitedStorage"
+    "unlimitedStorage",
+    "webNavigation"
   ],
   "host_permissions": [
-    "http://*/*",
-    "https://*/*"
+    "<all_urls>"
   ],
   "background": {
     "service_worker": "src/background.js"

@@ -13,6 +13,7 @@ const recordingsList = document.getElementById("recordingsList");
 const activeSection = document.getElementById("activeSection");
 const activeSectionTitle = document.getElementById("activeSectionTitle");
 const archiveSectionTitle = document.getElementById("archiveSectionTitle");
+const archiveSectionCopy = document.getElementById("archiveSectionCopy");
 const activeRecording = document.getElementById("activeRecording");
 const uiLanguageLabel = document.getElementById("uiLanguageLabel");
 const uiLanguageSelect = document.getElementById("uiLanguageSelect");
@@ -31,12 +32,24 @@ const recordingTitleInput = document.getElementById("recordingTitleInput");
 const editorSteps = document.getElementById("editorSteps");
 const saveEditButton = document.getElementById("saveEditButton");
 const cancelEditButton = document.getElementById("cancelEditButton");
+const importRecordingButton = document.getElementById("importRecordingButton");
+const importRecordingInput = document.getElementById("importRecordingInput");
+const exportMenuPopover = document.getElementById("exportMenuPopover");
+const exportDocumentationLabel = document.getElementById("exportDocumentationLabel");
+const exportMarkdownButton = document.getElementById("exportMarkdownButton");
+const exportHtmlButton = document.getElementById("exportHtmlButton");
+const exportConfluenceButton = document.getElementById("exportConfluenceButton");
+const exportPdfButton = document.getElementById("exportPdfButton");
+const exportShareLabel = document.getElementById("exportShareLabel");
+const copyClipboardButton = document.getElementById("copyClipboardButton");
+const exportArchiveLabel = document.getElementById("exportArchiveLabel");
+const exportRecordingFileButton = document.getElementById("exportRecordingFileButton");
 
 const UI_COPY = {
   de: {
     documentTitle: "ScreenSteps Verwaltung",
     pageTitle: "Aufnahmeverwaltung",
-    pageLead: "Alle gespeicherten Recordings an einem Ort. Exportiere, pruefe oder lösche sie direkt hier.",
+    pageLead: "Alle gespeicherten Recordings an einem Ort. Exportiere, importiere, prüfe oder lösche sie direkt hier.",
     refresh: "Aktualisieren",
     recordingCountLabel: "Gespeicherte Recordings",
     stepTotalLabel: "Gesamte Schritte",
@@ -44,7 +57,7 @@ const UI_COPY = {
     statusReady: "Bereit",
     statusActive: "Recording aktiv",
     uiLanguageLabel: "Sprache der Erweiterung",
-    recordingLanguageLabel: "Dokumentationssprache fuer neue Aufnahmen",
+    recordingLanguageLabel: "Dokumentationssprache für neue Aufnahmen",
     viewLabel: "Ansicht",
     viewGroupLabel: "Ansichtsmodus",
     detail: "Detail",
@@ -52,13 +65,15 @@ const UI_COPY = {
     grid: "Raster",
     editorTitle: "Recording bearbeiten",
     editorCopy: "Passe Titel, Schritttexte und Reihenfolge an und speichere die Version direkt im Archiv.",
-    close: "Schliessen",
+    close: "Schließen",
     save: "Speichern",
     titleLabel: "Titel",
     titlePlaceholder: "Aufnahmetitel",
     activeSectionTitle: "Aktive Aufnahme",
     archiveSectionTitle: "Archiv",
-    previewAlt: "Preview fuer",
+    archiveSectionCopy:
+      "Importiere eine ScreenSteps-Datei oder exportiere gespeicherte Abläufe gesammelt über das Export-Menü.",
+    previewAlt: "Preview für",
     noPreview: "Noch kein Vorschaubild vorhanden",
     activeBadge: "Aktiv",
     stepBadge: (count, language) => `${count} Schritte · ${language}`,
@@ -67,13 +82,20 @@ const UI_COPY = {
     metaLastUrl: "Letzte URL",
     metaLanguage: "Sprache",
     edit: "Bearbeiten",
+    export: "Exportieren",
+    documentationExports: "Dokumentation",
+    shareLabel: "Teilen",
+    clipboard: "Zwischenablage",
+    archiveFile: "Archivdatei",
+    recordingFile: "ScreenSteps Datei",
+    importRecording: "Ablauf importieren",
     markdown: "Markdown ZIP",
     html: "HTML ZIP",
     confluence: "Confluence Export",
     pdf: "PDF",
     delete: "Löschen",
     emptyRecordings: "Noch keine gespeicherten Recordings vorhanden.",
-    editorEmpty: "Dieses Recording enthaelt aktuell keine Schritte.",
+    editorEmpty: "Dieses Recording enthält aktuell keine Schritte.",
     stepImageAlt: (step) => `Schritt ${step}`,
     editorStepTitle: (step, action) => `Schritt ${step} · ${action}`,
     moveUp: "Hoch",
@@ -86,13 +108,17 @@ const UI_COPY = {
     stepStatusDisabled: "deaktiviert",
     recordingNotFound: "Recording wurde nicht gefunden.",
     unknownError: "Unbekannter Fehler.",
-    recordingLanguageUpdated: "Standardsprache fuer neue Aufnahmen aktualisiert.",
+    recordingLanguageUpdated: "Standardsprache für neue Aufnahmen aktualisiert.",
     uiLanguageUpdated: "Sprache der Erweiterung aktualisiert.",
     recordingSaved: "Recording wurde gespeichert.",
     markdownDownloaded: (name) => `Markdown-ZIP '${name}' wurde in Downloads angelegt.`,
     htmlDownloaded: (name) => `HTML-ZIP '${name}' wurde in Downloads angelegt.`,
     confluenceDownloaded: (name) => `Confluence-Export '${name}' wurde in Downloads angelegt.`,
-    pdfOpened: "Druckansicht geoeffnet. Im Dialog kannst du Als PDF speichern.",
+    recordingFileDownloaded: (name) => `ScreenSteps-Datei '${name}' wurde in Downloads angelegt.`,
+    clipboardCopied: "Ablauf mit eingebetteten Bildern in die Zwischenablage kopiert. Du kannst ihn direkt in Teams einfügen.",
+    importingRecording: "Ablauf wird importiert...",
+    recordingImported: (name) => `Ablauf '${name}' wurde importiert.`,
+    pdfOpened: "Druckansicht geöffnet. Im Dialog kannst du Als PDF speichern.",
     recordingDeleted: "Recording wurde gelöscht.",
     managerRefreshed: "Verwaltung aktualisiert.",
     managerLoadFailed: "Die Verwaltung konnte nicht geladen werden."
@@ -100,7 +126,7 @@ const UI_COPY = {
   en: {
     documentTitle: "ScreenSteps manager",
     pageTitle: "Recording manager",
-    pageLead: "All saved recordings in one place. Export, review, or delete them here.",
+    pageLead: "All saved recordings in one place. Export, import, review, or delete them here.",
     refresh: "Refresh",
     recordingCountLabel: "Saved recordings",
     stepTotalLabel: "Total steps",
@@ -122,6 +148,8 @@ const UI_COPY = {
     titlePlaceholder: "Recording title",
     activeSectionTitle: "Active recording",
     archiveSectionTitle: "Archive",
+    archiveSectionCopy:
+      "Import a ScreenSteps file or keep saved flows compact via the grouped export menu.",
     previewAlt: "Preview for",
     noPreview: "No preview available yet",
     activeBadge: "Active",
@@ -131,6 +159,13 @@ const UI_COPY = {
     metaLastUrl: "Last URL",
     metaLanguage: "Language",
     edit: "Edit",
+    export: "Export",
+    documentationExports: "Documentation",
+    shareLabel: "Share",
+    clipboard: "Clipboard",
+    archiveFile: "Archive file",
+    recordingFile: "ScreenSteps file",
+    importRecording: "Import flow",
     markdown: "Markdown ZIP",
     html: "HTML ZIP",
     confluence: "Confluence Export",
@@ -156,6 +191,10 @@ const UI_COPY = {
     markdownDownloaded: (name) => `Markdown ZIP '${name}' was saved to Downloads.`,
     htmlDownloaded: (name) => `HTML ZIP '${name}' was saved to Downloads.`,
     confluenceDownloaded: (name) => `Confluence export '${name}' was saved to Downloads.`,
+    recordingFileDownloaded: (name) => `ScreenSteps file '${name}' was saved to Downloads.`,
+    clipboardCopied: "Flow copied to the clipboard with embedded images. You can paste it directly into Teams.",
+    importingRecording: "Importing flow...",
+    recordingImported: (name) => `Flow '${name}' was imported.`,
     pdfOpened: "Print preview opened. Use the dialog to save as PDF.",
     recordingDeleted: "Recording deleted.",
     managerRefreshed: "Manager refreshed.",
@@ -166,6 +205,12 @@ const UI_COPY = {
 let latestLibrary = null;
 let latestManagerView = "detail";
 let editingDraft = null;
+let latestArchiveSignature = "";
+let latestActiveSignature = "";
+let exportMenuState = {
+  recordingId: "",
+  anchorButton: null
+};
 
 function normalizeLanguage(language) {
   return language === "en" ? "en" : "de";
@@ -228,6 +273,17 @@ function applyStaticUi(library = latestLibrary) {
   recordingTitleInput.placeholder = copy.titlePlaceholder;
   activeSectionTitle.textContent = copy.activeSectionTitle;
   archiveSectionTitle.textContent = copy.archiveSectionTitle;
+  archiveSectionCopy.textContent = copy.archiveSectionCopy;
+  importRecordingButton.textContent = copy.importRecording;
+  exportDocumentationLabel.textContent = copy.documentationExports;
+  exportArchiveLabel.textContent = copy.archiveFile;
+  exportShareLabel.textContent = copy.shareLabel;
+  exportMarkdownButton.textContent = copy.markdown;
+  exportHtmlButton.textContent = copy.html;
+  exportConfluenceButton.textContent = copy.confluence;
+  exportPdfButton.textContent = copy.pdf;
+  copyClipboardButton.textContent = copy.clipboard;
+  exportRecordingFileButton.textContent = copy.recordingFile;
 
   uiLanguageSelect.options[0].textContent = window.UiRecorderExportUtils.getLanguageLabel("de", uiLanguage);
   uiLanguageSelect.options[1].textContent = window.UiRecorderExportUtils.getLanguageLabel("en", uiLanguage);
@@ -264,6 +320,47 @@ function shortenUrl(value) {
   }
 }
 
+function getRecordingTitle(recording) {
+  return recording?.page_title || shortenUrl(recording?.initial_url || recording?.current_url);
+}
+
+function formatCompactUrl(value) {
+  if (!value) {
+    return {
+      display: "-",
+      title: "-"
+    };
+  }
+
+  try {
+    const parsed = new URL(value);
+    const base = `${parsed.hostname}${parsed.pathname === "/" ? "" : parsed.pathname}`;
+    const params = parsed.searchParams;
+    const queryPreview =
+      params.get("q") || params.get("query") || params.get("search") || params.get("text") || "";
+    const normalizedQuery = queryPreview.trim().replace(/\s+/g, " ");
+    const suffix = normalizedQuery
+      ? `?q=${normalizedQuery.length > 32 ? `${normalizedQuery.slice(0, 29)}...` : normalizedQuery}`
+      : parsed.search
+        ? "?..."
+        : parsed.hash
+          ? "#..."
+          : "";
+    const display = `${base}${suffix}`;
+
+    return {
+      display: display.length > 88 ? `${display.slice(0, 85)}...` : display,
+      title: shortenUrl(value)
+    };
+  } catch (error) {
+    const normalized = String(value).trim();
+    return {
+      display: normalized.length > 88 ? `${normalized.slice(0, 85)}...` : normalized,
+      title: normalized
+    };
+  }
+}
+
 function formatLanguage(language) {
   return window.UiRecorderExportUtils.getLanguageLabel(language, getUiLanguage());
 }
@@ -287,7 +384,8 @@ function getScreenshotForStep(recording, step) {
 
 function createButton(label, className, onClick) {
   const button = document.createElement("button");
-  button.className = `button ${className}`;
+  button.type = "button";
+  button.className = className ? `button ${className}` : "button";
   button.textContent = label;
   button.addEventListener("click", onClick);
   return button;
@@ -295,12 +393,164 @@ function createButton(label, className, onClick) {
 
 function createMetaItem(label, value) {
   const wrapper = document.createElement("div");
+  wrapper.className = "recording-meta-item";
   const heading = document.createElement("span");
   heading.textContent = label;
   const strong = document.createElement("strong");
   strong.textContent = value;
   wrapper.append(heading, strong);
   return wrapper;
+}
+
+function isExportMenuOpen() {
+  return Boolean(exportMenuState.recordingId) && !exportMenuPopover.classList.contains("hidden");
+}
+
+function getExportMenuRecording() {
+  return exportMenuState.recordingId ? findRecording(exportMenuState.recordingId) : null;
+}
+
+function closeExportMenu(options = {}) {
+  const { restoreFocus = true } = options;
+  const anchorButton = exportMenuState.anchorButton;
+  const activeElement = document.activeElement;
+
+  if (
+    restoreFocus &&
+    anchorButton instanceof HTMLElement &&
+    activeElement instanceof HTMLElement &&
+    exportMenuPopover.contains(activeElement)
+  ) {
+    anchorButton.focus({ preventScroll: true });
+  }
+
+  anchorButton?.classList.remove("is-open");
+  anchorButton?.setAttribute("aria-expanded", "false");
+  exportMenuPopover.classList.add("hidden");
+  exportMenuPopover.setAttribute("aria-hidden", "true");
+  exportMenuPopover.setAttribute("inert", "");
+  exportMenuState = {
+    recordingId: "",
+    anchorButton: null
+  };
+}
+
+function positionExportMenu() {
+  if (!isExportMenuOpen() || !exportMenuState.anchorButton?.isConnected) {
+    closeExportMenu();
+    return;
+  }
+
+  const gap = 10;
+  const viewportPadding = 16;
+  const anchorRect = exportMenuState.anchorButton.getBoundingClientRect();
+  const menuRect = exportMenuPopover.getBoundingClientRect();
+  const availableWidth = window.innerWidth - viewportPadding * 2;
+  const menuWidth = Math.min(menuRect.width || 360, availableWidth);
+  const placeAbove =
+    window.innerHeight - anchorRect.bottom < menuRect.height + gap + viewportPadding &&
+    anchorRect.top > menuRect.height + gap + viewportPadding;
+
+  let left = anchorRect.left + anchorRect.width / 2 - menuWidth / 2;
+  left = Math.min(Math.max(left, viewportPadding), window.innerWidth - menuWidth - viewportPadding);
+
+  let top = placeAbove ? anchorRect.top - menuRect.height - gap : anchorRect.bottom + gap;
+  top = Math.min(Math.max(top, viewportPadding), window.innerHeight - menuRect.height - viewportPadding);
+
+  exportMenuPopover.style.width = `${menuWidth}px`;
+  exportMenuPopover.style.left = `${Math.round(left)}px`;
+  exportMenuPopover.style.top = `${Math.round(top)}px`;
+  exportMenuPopover.dataset.placement = placeAbove ? "top" : "bottom";
+}
+
+function openExportMenu(recordingId, anchorButton) {
+  if (!recordingId || !anchorButton) {
+    return;
+  }
+
+  if (isExportMenuOpen()) {
+    closeExportMenu({ restoreFocus: false });
+  }
+
+  exportMenuState = {
+    recordingId,
+    anchorButton
+  };
+  anchorButton.classList.add("is-open");
+  anchorButton.setAttribute("aria-expanded", "true");
+  exportMenuPopover.classList.remove("hidden");
+  exportMenuPopover.setAttribute("aria-hidden", "false");
+  exportMenuPopover.removeAttribute("inert");
+  exportMenuPopover.style.width = "";
+  positionExportMenu();
+}
+
+function toggleExportMenu(recordingId, anchorButton) {
+  if (isExportMenuOpen() && exportMenuState.recordingId === recordingId) {
+    closeExportMenu();
+    return;
+  }
+
+  openExportMenu(recordingId, anchorButton);
+}
+
+function buildStepSignature(step = {}) {
+  return JSON.stringify({
+    step: step.step,
+    action: step.action || "",
+    description: step.description || "",
+    label: step.label || "",
+    value_preview: step.value_preview || "",
+    checked: typeof step.checked === "boolean" ? step.checked : null,
+    screenshot: step.screenshot || ""
+  });
+}
+
+function buildRecordingSignature(recording) {
+  return JSON.stringify({
+    id: recording?.id || "",
+    language: recording?.language || "",
+    page_title: recording?.page_title || "",
+    started_at: recording?.started_at || "",
+    ended_at: recording?.ended_at || "",
+    initial_url: recording?.initial_url || "",
+    current_url: recording?.current_url || "",
+    steps: (recording?.steps || []).map(buildStepSignature),
+    screenshots: (recording?.screenshots || []).map((item) => item?.name || "")
+  });
+}
+
+function getArchiveSignature(library) {
+  return (library?.recordings || []).map(buildRecordingSignature).join("||");
+}
+
+function getActiveSignature(library) {
+  if (library?.status !== "recording" || !library?.session) {
+    return "";
+  }
+
+  return buildRecordingSignature(library.session);
+}
+
+function focusRecordingCard(recordingId, behavior = "smooth") {
+  if (!recordingId) {
+    return;
+  }
+
+  window.requestAnimationFrame(() => {
+    const card = recordingsList.querySelector(`[data-recording-id="${CSS.escape(recordingId)}"]`);
+    card?.scrollIntoView({ block: "nearest", behavior });
+  });
+}
+
+function ensureEditorVisible() {
+  const bounds = editorSection.getBoundingClientRect();
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+  const isVisible = bounds.top >= 0 && bounds.bottom <= viewportHeight;
+
+  if (!isVisible) {
+    editorSection.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
 }
 
 function findRecording(recordingId) {
@@ -347,7 +597,7 @@ function buildRecordingCard(recording, options = {}) {
 
   const title = document.createElement("h3");
   title.className = "recording-title";
-  title.textContent = recording.page_title || shortenUrl(recording.initial_url || recording.current_url);
+  title.textContent = getRecordingTitle(recording);
 
   const badge = document.createElement("span");
   badge.className = "recording-badge";
@@ -359,11 +609,15 @@ function buildRecordingCard(recording, options = {}) {
 
   const meta = document.createElement("div");
   meta.className = "recording-meta";
+  const compactUrl = formatCompactUrl(recording.current_url || recording.initial_url);
+  const lastUrlItem = createMetaItem(t("metaLastUrl"), compactUrl.display);
+  lastUrlItem.classList.add("recording-meta-item-url");
+  lastUrlItem.querySelector("strong").title = compactUrl.title;
   meta.append(
     createMetaItem(t("metaStart"), formatTimestamp(recording.started_at)),
     createMetaItem(t("metaEnd"), formatTimestamp(recording.ended_at)),
-    createMetaItem(t("metaLastUrl"), shortenUrl(recording.current_url || recording.initial_url)),
-    createMetaItem(t("metaLanguage"), formatLanguage(recording.language))
+    createMetaItem(t("metaLanguage"), formatLanguage(recording.language)),
+    lastUrlItem
   );
 
   body.append(topLine, meta);
@@ -371,12 +625,14 @@ function buildRecordingCard(recording, options = {}) {
   if (!isActive) {
     const actions = document.createElement("div");
     actions.className = "recording-actions";
+    const exportButton = createButton(t("export"), "button-ghost export-trigger", () =>
+      toggleExportMenu(recording.id, exportButton)
+    );
+    exportButton.setAttribute("aria-haspopup", "dialog");
+    exportButton.setAttribute("aria-expanded", "false");
     actions.append(
       createButton(t("edit"), "button-ghost", () => openEditor(recording.id)),
-      createButton(t("markdown"), "button-ghost", () => handleMarkdownExport(recording)),
-      createButton(t("html"), "button-ghost", () => handleHtmlExport(recording)),
-      createButton(t("confluence"), "button-ghost", () => handleConfluenceExport(recording)),
-      createButton(t("pdf"), "button-ghost", () => handlePdfExport(recording)),
+      exportButton,
       createButton(t("delete"), "button-danger", () => handleDelete(recording.id))
     );
     body.appendChild(actions);
@@ -459,9 +715,9 @@ function renderEditor() {
     const actions = document.createElement("div");
     actions.className = "editor-step-actions";
     actions.append(
-      createButton(t("moveUp"), "button button-ghost button-mini", () => moveStep(index, -1)),
-      createButton(t("moveDown"), "button button-ghost button-mini", () => moveStep(index, 1)),
-      createButton(t("delete"), "button button-danger button-mini", () => removeStep(index))
+      createButton(t("moveUp"), "button-ghost button-mini", () => moveStep(index, -1)),
+      createButton(t("moveDown"), "button-ghost button-mini", () => moveStep(index, 1)),
+      createButton(t("delete"), "button-danger button-mini", () => removeStep(index))
     );
 
     if (index === 0) {
@@ -540,7 +796,7 @@ function openEditor(recordingId) {
 
   setEditingState(recording);
   renderEditor();
-  editorSection.scrollIntoView({ block: "start", behavior: "smooth" });
+  ensureEditorVisible();
 }
 
 function closeEditor() {
@@ -575,7 +831,15 @@ function removeStep(index) {
 }
 
 function renderLibrary(library) {
+  const uiLanguageSignature = getUiLanguage(library);
+  const previousArchiveSignature = latestArchiveSignature;
+  const previousActiveSignature = latestActiveSignature;
+  const nextArchiveSignature = `${uiLanguageSignature}::${getArchiveSignature(library)}`;
+  const nextActiveSignature = `${uiLanguageSignature}::${getActiveSignature(library)}`;
+
   latestLibrary = library;
+  latestArchiveSignature = nextArchiveSignature;
+  latestActiveSignature = nextActiveSignature;
   applyStaticUi(library);
 
   const recordings = library?.recordings || [];
@@ -590,20 +854,28 @@ function renderLibrary(library) {
   recordingLanguageSelect.disabled = library?.status === "recording";
   applyViewMode(managerView);
 
-  activeRecording.innerHTML = "";
   if (library?.status === "recording" && library?.session) {
     activeSection.classList.remove("hidden");
-    activeRecording.appendChild(buildRecordingCard(library.session, { isActive: true }));
+    if (previousActiveSignature !== nextActiveSignature || !activeRecording.firstChild) {
+      activeRecording.innerHTML = "";
+      activeRecording.appendChild(buildRecordingCard(library.session, { isActive: true }));
+    }
   } else {
     activeSection.classList.add("hidden");
+    if (activeRecording.firstChild) {
+      activeRecording.innerHTML = "";
+    }
   }
 
-  recordingsList.innerHTML = "";
-  if (recordings.length === 0) {
-    renderEmptyState(recordingsList, t("emptyRecordings"));
-  } else {
-    for (const recording of recordings) {
-      recordingsList.appendChild(buildRecordingCard(recording));
+  if (previousArchiveSignature !== nextArchiveSignature || !recordingsList.firstChild) {
+    closeExportMenu();
+    recordingsList.innerHTML = "";
+    if (recordings.length === 0) {
+      renderEmptyState(recordingsList, t("emptyRecordings"));
+    } else {
+      for (const recording of recordings) {
+        recordingsList.appendChild(buildRecordingCard(recording));
+      }
     }
   }
 
@@ -705,6 +977,7 @@ async function handleSaveEdit() {
     return;
   }
 
+  const savedRecordingId = editingDraft.id;
   saveEditButton.disabled = true;
 
   try {
@@ -720,9 +993,9 @@ async function handleSaveEdit() {
       }
     });
 
-    const updatedRecording = response.library.recordings.find((recording) => recording.id === editingDraft.id);
-    setEditingState(updatedRecording || null);
+    setEditingState(null);
     renderLibrary(response.library);
+    focusRecordingCard(savedRecordingId);
     setMessage(t("recordingSaved"));
   } catch (error) {
     setMessage(error.message, true);
@@ -764,6 +1037,36 @@ async function handleConfluenceExport(recording) {
   }
 }
 
+async function handleRecordingFileExport(recording) {
+  try {
+    const result = await window.UiRecorderExportUtils.downloadRecordingFile(recording);
+    setMessage(t("recordingFileDownloaded", result.fileName));
+  } catch (error) {
+    setMessage(error.message, true);
+  }
+}
+
+async function handleClipboardCopy(recording) {
+  try {
+    await window.UiRecorderExportUtils.copyRecordingToClipboard(recording);
+    setMessage(t("clipboardCopied"));
+  } catch (error) {
+    setMessage(error.message, true);
+  }
+}
+
+async function runExportFromPopover(handler) {
+  const recording = getExportMenuRecording();
+  closeExportMenu();
+
+  if (!recording) {
+    setMessage(t("recordingNotFound"), true);
+    return;
+  }
+
+  await handler(recording);
+}
+
 async function handlePdfExport(recording) {
   try {
     await chrome.tabs.create({
@@ -793,6 +1096,31 @@ async function handleDelete(recordingId) {
   }
 }
 
+async function handleImportRecording(event) {
+  const file = event.target.files?.[0];
+  importRecordingInput.value = "";
+
+  if (!file) {
+    return;
+  }
+
+  importRecordingButton.disabled = true;
+  setMessage(t("importingRecording"));
+
+  try {
+    const response = await sendMessage({
+      type: "recorder:import-recording",
+      fileContent: await file.text()
+    });
+    renderLibrary(response.library);
+    setMessage(t("recordingImported", getRecordingTitle(response.recording)));
+  } catch (error) {
+    setMessage(error.message, true);
+  } finally {
+    importRecordingButton.disabled = false;
+  }
+}
+
 async function initialize() {
   refreshButton.addEventListener("click", async () => {
     try {
@@ -815,15 +1143,58 @@ async function initialize() {
   });
   saveEditButton.addEventListener("click", handleSaveEdit);
   cancelEditButton.addEventListener("click", closeEditor);
+  importRecordingButton.addEventListener("click", () => importRecordingInput.click());
+  importRecordingInput.addEventListener("change", handleImportRecording);
+
+  exportMarkdownButton.addEventListener("click", () => void runExportFromPopover(handleMarkdownExport));
+  exportHtmlButton.addEventListener("click", () => void runExportFromPopover(handleHtmlExport));
+  exportConfluenceButton.addEventListener("click", () => void runExportFromPopover(handleConfluenceExport));
+  exportPdfButton.addEventListener("click", () => void runExportFromPopover(handlePdfExport));
+  copyClipboardButton.addEventListener("click", () => void runExportFromPopover(handleClipboardCopy));
+  exportRecordingFileButton.addEventListener("click", () => void runExportFromPopover(handleRecordingFileExport));
+
+  document.addEventListener("click", (event) => {
+    if (
+      isExportMenuOpen() &&
+      event.target instanceof Node &&
+      !exportMenuPopover.contains(event.target) &&
+      !exportMenuState.anchorButton?.contains(event.target)
+    ) {
+      closeExportMenu();
+    }
+  });
+  window.addEventListener("resize", () => {
+    if (isExportMenuOpen()) {
+      positionExportMenu();
+    }
+  });
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (isExportMenuOpen()) {
+        closeExportMenu();
+      }
+    },
+    true
+  );
 
   chrome.storage.onChanged.addListener((changes, areaName) => {
     if (areaName !== "local" || !changes[STORAGE_KEY]) {
       return;
     }
 
-    loadLibrary()
-      .then(renderLibrary)
-      .catch((error) => setMessage(error.message, true));
+    const nextState = changes[STORAGE_KEY].newValue;
+    if (!nextState) {
+      return;
+    }
+
+    renderLibrary({
+      status: nextState.status,
+      error: nextState.error,
+      preferences: nextState.preferences,
+      session: nextState.session,
+      recordings: nextState.recordings || []
+    });
   });
 
   try {

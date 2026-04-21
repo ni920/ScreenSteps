@@ -4,7 +4,7 @@
   <p><strong>Dokumentiere Browser-Workflows. Screenshot für Screenshot.</strong></p>
 
   <p>
-    <img src="https://img.shields.io/badge/version-0.1.12-0f766e?style=flat-square" alt="Version" />
+    <img src="https://img.shields.io/badge/version-0.1.19-0f766e?style=flat-square" alt="Version" />
     <img src="https://img.shields.io/badge/Manifest-V3-0f766e?style=flat-square" alt="Manifest V3" />
     <img src="https://img.shields.io/badge/Kein%20KI-100%25%20lokal-16a34a?style=flat-square" alt="Kein KI" />
     <img src="https://img.shields.io/badge/Kein%20Server-Offline%20nutzbar-16a34a?style=flat-square" alt="Kein Server" />
@@ -58,10 +58,13 @@ ScreenSteps ist eine **lokale Chrome-Erweiterung** (Manifest V3), die relevante 
 
 | | Feature |
 |---|---|
-| 📸 | **Automatische Screenshots** nach Klick, Eingabe oder Navigation – kein manuelles Zuschneiden |
+| 📸 | **Automatische Screenshots** nach Klick, Eingabe oder Navigation – auch bei Same-Tab-Routenwechseln moderner Web-Apps und robusteren Zielseiten-Captures |
 | 🎯 | **Visuelle Markierung** des interagierten Elements direkt im Screenshot |
 | ✏️ | **Schritte bearbeiten** – Titel, Texte, Reihenfolge und Aktivierung im integrierten Manager |
-| 📦 | **Vier Exportformate**: Markdown ZIP · HTML ZIP · Confluence Export · PDF |
+| 🧭 | **Ruhigere Verwaltung** – Export-Menü schwebt als Popover, lange URLs bleiben kompakt, und nach dem Speichern geht es zurück ins Archiv |
+| 📋 | **Schnell teilen** – Abläufe direkt mit eingebetteten Bildern in die Zwischenablage kopieren, z. B. für Teams |
+| 🔁 | **Abläufe sichern & importieren** – gespeicherte Flows als `.screensteps` Datei mitnehmen und später wieder ins Archiv laden |
+| 📦 | **Vier Dokumentations-Exporte**: Markdown ZIP · HTML ZIP · Confluence Export · PDF |
 | 🌍 | **Deutsch & Englisch** – UI-Sprache und Dokumentationssprache unabhängig einstellbar |
 | 🔒 | **100 % lokal** – kein Backend, kein Tracking, kein Account |
 | 🚫 | **Kein KI-Modell** – Beschreibungen basieren auf echten UI-Labels, nicht auf Sprachmodellen |
@@ -98,7 +101,8 @@ git clone https://github.com/ni920/ScreenSteps.git
 3. Erweiterung anklicken → „Record starten"
 4. Auf der Webseite interagieren (Klicks, Formulare, Navigation)
 5. Erweiterung öffnen → „Record stoppen"
-6. In „Verwalten" → Schritte prüfen → exportieren
+6. In „Verwalten" → Schritte prüfen → über „Exportieren" ausgeben
+7. Optional: Eine `.screensteps` Datei in der Verwaltung wieder importieren
 ```
 
 ---
@@ -111,6 +115,14 @@ git clone https://github.com/ni920/ScreenSteps.git
 | **HTML ZIP** | `index.html` + `images/`-Ordner – standalone, im Browser öffenbar |
 | **Confluence Export** | Einzelne HTML-Datei mit eingebetteten Bildern – direkt in Confluence einfügbar |
 | **PDF** | Browser-Druckdialog → *Als PDF speichern* |
+
+### Archivtransfer
+
+Gespeicherte Abläufe lassen sich zusätzlich als `.screensteps` Datei sichern und über **„Ablauf importieren"** wieder in das lokale Archiv einer anderen oder derselben ScreenSteps-Installation übernehmen.
+
+### Schnell teilen
+
+Über **„Exportieren" → „Zwischenablage"** kopiert ScreenSteps einen HTML-Report mit eingebetteten Base64-Bildern direkt in die Zwischenablage. Danach kann der Ablauf direkt in Teams, Chats oder Posts eingefügt werden.
 
 ---
 
@@ -155,6 +167,11 @@ ScreenSteps/
 
 - Screenshots erfassen nur den **sichtbaren Bereich** des aktiven Tabs
 - Scrollbalken werden vor dem Screenshot kurz ausgeblendet
+- Navigationen im selben Tab werden auch bei History-API- und Hash-Wechseln als eigene Schritte erfasst
+- Links, die im Vordergrund einen neuen Tab aus dem aktuellen Ablauf öffnen, werden weiterverfolgt statt als fremder Tabwechsel beendet
+- Screenshot-Captures werden intern gedrosselt und bei schnellen Klick-/Navigationsfolgen mehrfach versucht, damit Chrome-Quoten den Ablauf nicht abbrechen
+- Klick-Markierungen werden vor dem Annotieren erneut gegen die aktuelle DOM-Position des Elements abgeglichen, damit Trefferpunkte stabiler sitzen
+- Für domainübergreifende Screenshots nutzt ScreenSteps eine Host-Berechtigung für alle URLs; aufgezeichnet werden weiterhin nur normale http(s)-Seiten
 - Bei Tab-Wechsel während einer Aufnahme wird diese **automatisch beendet**
 - `chrome://`-Seiten und der Chrome Web Store können nicht aufgezeichnet werden
 - Sehr lange Sessions mit vielen Bildern können speicherintensiv werden (`unlimitedStorage` ist aktiviert)

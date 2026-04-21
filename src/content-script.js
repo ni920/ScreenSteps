@@ -60,8 +60,8 @@
         label ? `Klick auf ${typeName} '${label}'` : `Klick auf ${typeName}`,
       select: (value, label) =>
         label
-          ? `Option '${value}' in Dropdown '${label}' ausgewaehlt`
-          : `Option '${value}' in Dropdown ausgewaehlt`,
+          ? `Option '${value}' in Dropdown '${label}' ausgewählt`
+          : `Option '${value}' in Dropdown ausgewählt`,
       toggle: (typeName, label, checked) =>
         label
           ? `${typeName} '${label}' ${checked ? "aktiviert" : "deaktiviert"}`
@@ -71,7 +71,7 @@
       textInput: (label) => (label ? `Text in Feld '${label}' eingegeben` : "Text in Feld eingegeben"),
       textAreaInput: (label) =>
         label ? `Text in Textfeld '${label}' eingegeben` : "Text in Textfeld eingegeben",
-      genericInput: (label) => (label ? `Eingabe in '${label}' geaendert` : "Eingabe geaendert")
+      genericInput: (label) => (label ? `Eingabe in '${label}' geändert` : "Eingabe geändert")
     },
     en: {
       fieldTypes: {
@@ -168,6 +168,10 @@
     }
 
     return `${normalized.slice(0, maxLength - 1)}...`;
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
   }
 
   function safeDecode(value) {
@@ -558,24 +562,208 @@
     };
   }
 
-  function getMarker(element, event) {
-    if (!element || typeof element.getBoundingClientRect !== "function") {
+  function buildMarkerFromRect(rect, originalMarker = null, event = null) {
+    if (!rect) {
       return null;
     }
 
-    const rect = element.getBoundingClientRect();
+    const hasOriginalMarker =
+      originalMarker &&
+      typeof originalMarker === "object" &&
+      Number.isFinite(Number(originalMarker.clickX)) &&
+      Number.isFinite(Number(originalMarker.clickY));
+
+    let clickX = rect.left + Math.max(rect.width, 24) / 2;
+    let clickY = rect.top + Math.max(rect.height, 24) / 2;
+
+    if (typeof event?.clientX === "number" && typeof event?.clientY === "number") {
+      clickX = event.clientX;
+      clickY = event.clientY;
+    } else if (hasOriginalMarker) {
+      const originalX = Number(originalMarker.x);
+      const originalY = Number(originalMarker.y);
+      const originalWidth = Number(originalMarker.width);
+      const originalHeight = Number(originalMarker.height);
+      const relativeX =
+        Number.isFinite(originalWidth) && originalWidth > 0
+          ? clamp((Number(originalMarker.clickX) - originalX) / originalWidth, 0, 1)
+          : 0.5;
+      const relativeY =
+        Number.isFinite(originalHeight) && originalHeight > 0
+          ? clamp((Number(originalMarker.clickY) - originalY) / originalHeight, 0, 1)
+          : 0.5;
+
+      clickX = rect.left + rect.width * relativeX;
+      clickY = rect.top + rect.height * relativeY;
+    }
+
     return {
       x: rect.left,
       y: rect.top,
       width: rect.width,
       height: rect.height,
-      clickX:
-        typeof event?.clientX === "number" ? event.clientX : rect.left + Math.max(rect.width, 24) / 2,
-      clickY:
-        typeof event?.clientY === "number" ? event.clientY : rect.top + Math.max(rect.height, 24) / 2,
+      clickX,
+      clickY,
       viewportWidth: window.innerWidth,
       viewportHeight: window.innerHeight
     };
+  }
+
+  function getMarker(element, event, originalMarker = null) {
+    if (!element || typeof element.getBoundingClientRect !== "function") {
+      return null;
+    }
+
+    return buildMarkerFromRect(element.getBoundingClientRect(), originalMarker, event);
+  }
+
+  function resolveElementBySelector(selector) {
+    if (!selector) {
+      return null;
+    }
+
+    try {
+      return document.querySelector(selector);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function resolveElementByXPath(xpath) {
+    if (!xpath) {
+      return null;
+    }
+
+    try {
+      const result = document.evaluate(
+        xpath,
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      );
+      return result.singleNodeValue instanceof Element ? result.singleNodeValue : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function registerMarkerCandidate(candidateMap, element, score) {
+    if (!(element instanceof Element)) {
+      return;
+    }
+
+    const rect = element.getBoundingClientRect();
+    if (rect.width <= 0 && rect.height <= 0) {
+      return;
+    }
+
+    const previousScore = candidateMap.get(element) || 0;
+    candidateMap.set(element, Math.max(previousScore, score));
+  }
+
+  function registerAttributeCandidates(candidateMap, attributes = {}) {
+    if (!attributes || typeof attributes !== "object") {
+      return;
+    }
+
+    if (attributes.id) {
+      registerMarkerCandidate(candidateMap, document.getElementById(attributes.id), 110);
+    }
+
+    if (attributes["data-testid"]) {
+      const value = cssEscape(attributes["data-testid"]);
+      for (const element of document.querySelectorAll(`[data-testid="${value}"], [data-test="${value}"]`)) {
+        registerMarkerCandidate(candidateMap, element, 104);
+      }
+    }
+
+    if (attributes.name) {
+      const value = cssEscape(attributes.name);
+      for (const element of document.querySelectorAll(`[name="${value}"]`)) {
+        registerMarkerCandidate(candidateMap, element, 94);
+      }
+    }
+
+    if (attributes["aria-label"]) {
+      const value = cssEscape(attributes["aria-label"]);
+      for (const element of document.querySelectorAll(`[aria-label="${value}"]`)) {
+        registerMarkerCandidate(candidateMap, element, 92);
+      }
+    }
+
+    if (attributes.href) {
+      let normalizedHref = "";
+
+      try {
+        normalizedHref = new URL(attributes.href, window.location.href).href;
+      } catch (error) {
+        normalizedHref = attributes.href;
+      }
+
+      for (const element of document.querySelectorAll("a[href]")) {
+        if (element.href === normalizedHref || element.getAttribute("href") === attributes.href) {
+          registerMarkerCandidate(candidateMap, element, 96);
+        }
+      }
+    }
+  }
+
+  function scoreMarkerCandidate(element, originalMarker = null) {
+    if (!(element instanceof Element) || !originalMarker || typeof originalMarker !== "object") {
+      return 0;
+    }
+
+    const rect = element.getBoundingClientRect();
+    const originalCenterX = Number(originalMarker.x) + Number(originalMarker.width || 0) / 2;
+    const originalCenterY = Number(originalMarker.y) + Number(originalMarker.height || 0) / 2;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const distance = Math.hypot(centerX - originalCenterX, centerY - originalCenterY);
+    let score = Math.max(0, 42 - distance * 0.35);
+
+    if (
+      Number.isFinite(Number(originalMarker.clickX)) &&
+      Number.isFinite(Number(originalMarker.clickY)) &&
+      Number(originalMarker.clickX) >= rect.left &&
+      Number(originalMarker.clickX) <= rect.right &&
+      Number(originalMarker.clickY) >= rect.top &&
+      Number(originalMarker.clickY) <= rect.bottom
+    ) {
+      score += 36;
+    }
+
+    return score;
+  }
+
+  function resolveMarkerElement(payload = {}) {
+    const candidateMap = new Map();
+
+    registerMarkerCandidate(candidateMap, resolveElementBySelector(payload.selector), 140);
+    registerMarkerCandidate(candidateMap, resolveElementByXPath(payload.xpath), 126);
+    registerAttributeCandidates(candidateMap, payload.attributes);
+
+    const candidates = Array.from(candidateMap.entries());
+    if (candidates.length === 0) {
+      return null;
+    }
+
+    candidates.sort((left, right) => {
+      const leftScore = left[1] + scoreMarkerCandidate(left[0], payload.marker);
+      const rightScore = right[1] + scoreMarkerCandidate(right[0], payload.marker);
+      return rightScore - leftScore;
+    });
+
+    return candidates[0][0];
+  }
+
+  function resolveMarker(payload = {}) {
+    const element = resolveMarkerElement(payload);
+    if (!element) {
+      return payload.marker || null;
+    }
+
+    return getMarker(element, null, payload.marker || null);
   }
 
   function buildSelector(element) {
@@ -855,6 +1043,11 @@
     if (message.type === "recorder:finish-capture") {
       disableCaptureMode();
       sendResponse({ ok: true });
+      return true;
+    }
+
+    if (message.type === "recorder:resolve-marker") {
+      sendResponse({ ok: true, marker: resolveMarker(message.payload || {}) });
       return true;
     }
 

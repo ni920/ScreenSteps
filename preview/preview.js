@@ -5,7 +5,7 @@
     de: {
       previewTitle: "ScreenSteps Vorschau",
       loading: "Report wird geladen...",
-      errorTitle: "Kein Export moeglich",
+      errorTitle: "Kein Export möglich",
       missingRecording: "Es ist keine aufgezeichnete Session mit Schritten vorhanden.",
       renderFailed: "Der Report konnte nicht erzeugt werden."
     },

@@ -12,7 +12,7 @@
         <div>
           <p class="eyebrow">ScreenSteps</p>
           <h1 id="pageTitle">Aufnahmeverwaltung</h1>
-          <p id="pageLead" class="lead">Alle gespeicherten Recordings an einem Ort. Exportiere, pruefe oder lösche sie direkt hier.</p>
+          <p id="pageLead" class="lead">Alle gespeicherten Recordings an einem Ort. Exportiere, importiere, prüfe oder lösche sie direkt hier.</p>
         </div>
         <button id="refreshButton" class="button button-ghost">Aktualisieren</button>
       </header>
@@ -43,7 +43,7 @@
           </label>
 
           <label class="control-field" for="recordingLanguageSelect">
-            <span id="recordingLanguageLabel">Dokumentationssprache fuer neue Aufnahmen</span>
+            <span id="recordingLanguageLabel">Dokumentationssprache für neue Aufnahmen</span>
             <select id="recordingLanguageSelect">
               <option value="de">Deutsch</option>
               <option value="en">English</option>
@@ -70,7 +70,7 @@
             <p id="editorCopy" class="panel-copy">Passe Titel, Schritttexte und Reihenfolge an und speichere die Version direkt im Archiv.</p>
           </div>
           <div class="editor-header-actions">
-            <button id="cancelEditButton" class="button button-ghost" type="button">Schliessen</button>
+            <button id="cancelEditButton" class="button button-ghost" type="button">Schließen</button>
             <button id="saveEditButton" class="button button-primary" type="button">Speichern</button>
           </div>
         </div>
@@ -93,12 +93,59 @@
       </section>
 
       <section class="panel">
-        <div class="panel-header">
-          <h2 id="archiveSectionTitle">Archiv</h2>
+        <div class="panel-header archive-panel-header">
+          <div>
+            <h2 id="archiveSectionTitle">Archiv</h2>
+            <p id="archiveSectionCopy" class="panel-copy">Importiere eine ScreenSteps-Datei oder exportiere gespeicherte Abläufe gesammelt über das Export-Menü.</p>
+          </div>
+          <div class="archive-actions">
+            <input id="importRecordingInput" class="visually-hidden" type="file" accept=".screensteps" />
+            <button id="importRecordingButton" class="button button-ghost" type="button">Ablauf importieren</button>
+          </div>
         </div>
         <div id="recordingsList" class="recordings-list"></div>
       </section>
     </main>
+
+    <div id="exportMenuPopover" class="floating-export-menu hidden" aria-hidden="true" inert>
+      <div class="floating-export-shell">
+        <p id="exportDocumentationLabel" class="export-menu-label">Dokumentation</p>
+        <div class="export-menu-grid">
+          <button id="exportMarkdownButton" class="button button-ghost button-mini export-action-button" type="button">
+            Markdown ZIP
+          </button>
+          <button id="exportHtmlButton" class="button button-ghost button-mini export-action-button" type="button">
+            HTML ZIP
+          </button>
+          <button
+            id="exportConfluenceButton"
+            class="button button-ghost button-mini export-action-button"
+            type="button"
+          >
+            Confluence Export
+          </button>
+          <button id="exportPdfButton" class="button button-ghost button-mini export-action-button" type="button">
+            PDF
+          </button>
+        </div>
+        <p id="exportShareLabel" class="export-menu-label">Teilen</p>
+        <div class="export-menu-file">
+          <button id="copyClipboardButton" class="button button-ghost button-mini export-action-button" type="button">
+            Zwischenablage
+          </button>
+        </div>
+        <p id="exportArchiveLabel" class="export-menu-label">Archivdatei</p>
+        <div class="export-menu-file">
+          <button
+            id="exportRecordingFileButton"
+            class="button button-ghost button-mini export-action-button"
+            type="button"
+          >
+            ScreenSteps Datei
+          </button>
+        </div>
+      </div>
+    </div>
 
     <script src="../src/export-utils.js"></script>
     <script src="manager.js"></script>
