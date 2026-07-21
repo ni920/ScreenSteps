@@ -39,7 +39,7 @@ const UI_COPY = {
     cannotDeleteActiveRecording: "Die laufende Aufnahme kann nicht gelöscht werden.",
     cannotEditActiveRecording: "Eine laufende Aufnahme kann nicht bearbeitet werden.",
     recordingNotFound: "Recording wurde nicht gefunden.",
-    invalidImportFile: "Die Datei ist kein gültiger ScreenSteps-Ablauf.",
+    invalidImportFile: "Die Datei ist kein gültiger DokuFaden-Ablauf.",
     trackedTabClosed: "Die aufgezeichnete Registerkarte wurde geschlossen.",
     tabSwitchStoppedRecording: "Die Aufnahme wurde beendet, weil du zu einem anderen Tab gewechselt hast."
   },
@@ -53,7 +53,7 @@ const UI_COPY = {
     cannotDeleteActiveRecording: "The active recording cannot be deleted.",
     cannotEditActiveRecording: "An active recording cannot be edited.",
     recordingNotFound: "Recording could not be found.",
-    invalidImportFile: "The file is not a valid ScreenSteps flow.",
+    invalidImportFile: "The file is not a valid DokuFaden flow.",
     trackedTabClosed: "The recorded tab was closed.",
     tabSwitchStoppedRecording: "The recording was stopped because you switched to another tab."
   }
@@ -905,7 +905,11 @@ function extractImportedRecording(fileContent) {
   try {
     const parsed = JSON.parse(fileContent);
 
-    if (parsed?.format === "screensteps-recording" && parsed.recording && typeof parsed.recording === "object") {
+    if (
+      (parsed?.format === "dokufaden-recording" || parsed?.format === "screensteps-recording") &&
+      parsed.recording &&
+      typeof parsed.recording === "object"
+    ) {
       return parsed.recording;
     }
 

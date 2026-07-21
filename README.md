@@ -1,27 +1,27 @@
 <div align="center">
-  <img src="docs/assets/icons/icon128.png" width="80" alt="ScreenSteps Icon" />
-  <h1>ScreenSteps</h1>
+  <img src="docs/assets/icons/icon128.png" width="80" alt="DokuFaden Icon" />
+  <h1>DokuFaden</h1>
   <p><strong>Dokumentiere Browser-Workflows. Screenshot für Screenshot.</strong></p>
 
   <p>
-    <img src="https://img.shields.io/badge/version-0.1.19-0f766e?style=flat-square" alt="Version" />
+    <img src="https://img.shields.io/badge/version-0.1.20-0f766e?style=flat-square" alt="Version" />
     <img src="https://img.shields.io/badge/Manifest-V3-0f766e?style=flat-square" alt="Manifest V3" />
     <img src="https://img.shields.io/badge/Kein%20KI-100%25%20lokal-16a34a?style=flat-square" alt="Kein KI" />
     <img src="https://img.shields.io/badge/Kein%20Server-Offline%20nutzbar-16a34a?style=flat-square" alt="Kein Server" />
   </p>
 
   <p>
-    <a href="https://ni920.github.io/ScreenSteps/">Website</a> ·
-    <a href="https://ni920.github.io/ScreenSteps/privacy.html">Datenschutz</a> ·
+    <a href="https://ni920.github.io/DokuFaden/">Website</a> ·
+    <a href="https://ni920.github.io/DokuFaden/privacy.html">Datenschutz</a> ·
     <a href="https://chromewebstore.google.com">Chrome Web Store</a>
   </p>
 </div>
 
 ---
 
-## Was ist ScreenSteps?
+## Was ist DokuFaden?
 
-ScreenSteps ist eine **lokale Chrome-Erweiterung** (Manifest V3), die relevante Nutzerinteraktionen auf Webseiten aufzeichnet, nach jedem Schritt automatisch einen Screenshot des sichtbaren Tabs erstellt, das betroffene UI-Element im Bild markiert und das Ergebnis als saubere Schritt-für-Schritt-Dokumentation exportiert.
+DokuFaden ist eine **lokale Chrome-Erweiterung** (Manifest V3), die relevante Nutzerinteraktionen auf Webseiten aufzeichnet, nach jedem Schritt automatisch einen Screenshot des sichtbaren Tabs erstellt, das betroffene UI-Element im Bild markiert und das Ergebnis als saubere Schritt-für-Schritt-Dokumentation exportiert.
 
 > **Kein KI-Modell. Kein Server. Keine Datensammlung.**  
 > Alle Daten bleiben ausschließlich lokal in `chrome.storage.local` auf deinem Gerät.
@@ -32,25 +32,14 @@ ScreenSteps ist eine **lokale Chrome-Erweiterung** (Manifest V3), die relevante 
 
 <table>
   <tr>
-    <td><img src="docs/assets/pictures/screenshot-1.png" alt="Popup – Bereit" width="100%" /></td>
-    <td><img src="docs/assets/pictures/screenshot-2.png" alt="Aufnahme läuft" width="100%" /></td>
-  </tr>
-  <tr>
-    <td align="center"><em>Popup – Bereit zum Aufnehmen</em></td>
-    <td align="center"><em>Aufnahme aktiv</em></td>
-  </tr>
-  <tr>
-    <td><img src="docs/assets/pictures/screenshot-3.png" alt="Verwaltung – Archiv" width="100%" /></td>
-    <td><img src="docs/assets/pictures/screenshot-4.png" alt="Schritte bearbeiten" width="100%" /></td>
+    <td><img src="docs/assets/pictures/screenshot-4.png" alt="DokuFaden – Archiv" width="100%" /></td>
+    <td><img src="docs/assets/pictures/screenshot-5.png" alt="DokuFaden – Schritte bearbeiten" width="100%" /></td>
   </tr>
   <tr>
     <td align="center"><em>Verwaltung – Alle Recordings</em></td>
     <td align="center"><em>Schritte bearbeiten</em></td>
   </tr>
 </table>
-
-<img src="docs/assets/pictures/screenshot-5.png" alt="Export-Ansicht" width="100%" />
-<p align="center"><em>Export-Ansicht – Markdown, HTML, Confluence oder PDF</em></p>
 
 ---
 
@@ -63,7 +52,7 @@ ScreenSteps ist eine **lokale Chrome-Erweiterung** (Manifest V3), die relevante 
 | ✏️ | **Schritte bearbeiten** – Titel, Texte, Reihenfolge und Aktivierung im integrierten Manager |
 | 🧭 | **Ruhigere Verwaltung** – Export-Menü schwebt als Popover, lange URLs bleiben kompakt, und nach dem Speichern geht es zurück ins Archiv |
 | 📋 | **Schnell teilen** – Abläufe direkt mit eingebetteten Bildern in die Zwischenablage kopieren, z. B. für Teams |
-| 🔁 | **Abläufe sichern & importieren** – gespeicherte Flows als `.screensteps` Datei mitnehmen und später wieder ins Archiv laden |
+| 🔁 | **Abläufe sichern & importieren** – gespeicherte Flows als `.dokufaden`-Datei mitnehmen und später wieder ins Archiv laden; ältere `.screensteps`-Dateien bleiben kompatibel |
 | 📦 | **Vier Dokumentations-Exporte**: Markdown ZIP · HTML ZIP · Confluence Export · PDF |
 | 🌍 | **Deutsch & Englisch** – UI-Sprache und Dokumentationssprache unabhängig einstellbar |
 | 🔒 | **100 % lokal** – kein Backend, kein Tracking, kein Account |
@@ -76,20 +65,20 @@ ScreenSteps ist eine **lokale Chrome-Erweiterung** (Manifest V3), die relevante 
 
 ### Aus dem Chrome Web Store *(empfohlen)*
 
-1. [Chrome Web Store – ScreenSteps](https://chromewebstore.google.com) öffnen
+1. [Chrome Web Store – DokuFaden](https://chromewebstore.google.com) öffnen
 2. **„Zu Chrome hinzufügen"** klicken – fertig
 
 ### Manuell (Entwicklermodus)
 
 ```bash
 # Repo klonen
-git clone https://github.com/ni920/ScreenSteps.git
+git clone https://github.com/ni920/DokuFaden.git
 ```
 
 1. `chrome://extensions` in Chrome öffnen
 2. **Entwicklermodus** (oben rechts) aktivieren
 3. **„Entpackte Erweiterung laden"** klicken
-4. Den Ordner `ScreenSteps/` auswählen
+4. Den Ordner `DokuFaden/` auswählen
 
 ---
 
@@ -102,7 +91,7 @@ git clone https://github.com/ni920/ScreenSteps.git
 4. Auf der Webseite interagieren (Klicks, Formulare, Navigation)
 5. Erweiterung öffnen → „Record stoppen"
 6. In „Verwalten" → Schritte prüfen → über „Exportieren" ausgeben
-7. Optional: Eine `.screensteps` Datei in der Verwaltung wieder importieren
+7. Optional: Eine `.dokufaden`-Datei in der Verwaltung wieder importieren
 ```
 
 ---
@@ -118,18 +107,18 @@ git clone https://github.com/ni920/ScreenSteps.git
 
 ### Archivtransfer
 
-Gespeicherte Abläufe lassen sich zusätzlich als `.screensteps` Datei sichern und über **„Ablauf importieren"** wieder in das lokale Archiv einer anderen oder derselben ScreenSteps-Installation übernehmen.
+Gespeicherte Abläufe lassen sich zusätzlich als `.dokufaden`-Datei sichern und über **„Ablauf importieren"** wieder in das lokale Archiv einer anderen oder derselben DokuFaden-Installation übernehmen. Bereits vorhandene `.screensteps`-Dateien können weiterhin importiert werden.
 
 ### Schnell teilen
 
-Über **„Exportieren" → „Zwischenablage"** kopiert ScreenSteps einen HTML-Report mit eingebetteten Base64-Bildern direkt in die Zwischenablage. Danach kann der Ablauf direkt in Teams, Chats oder Posts eingefügt werden.
+Über **„Exportieren" → „Zwischenablage"** kopiert DokuFaden einen HTML-Report mit eingebetteten Base64-Bildern direkt in die Zwischenablage. Danach kann der Ablauf direkt in Teams, Chats oder Posts eingefügt werden.
 
 ---
 
 ## Projektstruktur
 
 ```
-ScreenSteps/
+DokuFaden/
 ├── manifest.json
 ├── README.md
 ├── assets/
@@ -171,7 +160,7 @@ ScreenSteps/
 - Links, die im Vordergrund einen neuen Tab aus dem aktuellen Ablauf öffnen, werden weiterverfolgt statt als fremder Tabwechsel beendet
 - Screenshot-Captures werden intern gedrosselt und bei schnellen Klick-/Navigationsfolgen mehrfach versucht, damit Chrome-Quoten den Ablauf nicht abbrechen
 - Klick-Markierungen werden vor dem Annotieren erneut gegen die aktuelle DOM-Position des Elements abgeglichen, damit Trefferpunkte stabiler sitzen
-- Für domainübergreifende Screenshots nutzt ScreenSteps eine Host-Berechtigung für alle URLs; aufgezeichnet werden weiterhin nur normale http(s)-Seiten
+- Für domainübergreifende Screenshots nutzt DokuFaden eine Host-Berechtigung für alle URLs; aufgezeichnet werden weiterhin nur normale http(s)-Seiten
 - Bei Tab-Wechsel während einer Aufnahme wird diese **automatisch beendet**
 - `chrome://`-Seiten und der Chrome Web Store können nicht aufgezeichnet werden
 - Sehr lange Sessions mit vielen Bildern können speicherintensiv werden (`unlimitedStorage` ist aktiviert)
@@ -181,14 +170,14 @@ ScreenSteps/
 
 ## Datenschutz & Transparenz
 
-ScreenSteps sammelt, überträgt oder speichert **keinerlei Daten** außerhalb des lokalen Browsers.  
+DokuFaden sammelt, überträgt oder speichert **keinerlei Daten** außerhalb des lokalen Browsers.
 Es gibt keine Telemetrie, keine Analyse, keine API-Calls an Drittanbieter.  
-→ [Vollständige Datenschutzerklärung](https://ni920.github.io/ScreenSteps/privacy.html)
+→ [Vollständige Datenschutzerklärung](https://ni920.github.io/DokuFaden/privacy.html)
 
 ---
 
 <div align="center">
   <sub>
-    Made with ☕ · <a href="https://ni920.github.io/ScreenSteps/">Website</a> · <a href="https://www.nico-saia.com/impressum">Impressum</a>
+    Made with ☕ · <a href="https://ni920.github.io/DokuFaden/">Website</a> · <a href="https://www.nico-saia.com/impressum">Impressum</a>
   </sub>
 </div>

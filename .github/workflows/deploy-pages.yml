@@ -1,4 +1,4 @@
-name: Deploy ScreenSteps GitHub Page
+name: Deploy DokuFaden GitHub Page
 
 on:
   push:

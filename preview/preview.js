@@ -3,14 +3,14 @@
   const loadingMessage = document.getElementById("loadingMessage");
   const UI_COPY = {
     de: {
-      previewTitle: "ScreenSteps Vorschau",
+      previewTitle: "DokuFaden Vorschau",
       loading: "Report wird geladen...",
       errorTitle: "Kein Export möglich",
       missingRecording: "Es ist keine aufgezeichnete Session mit Schritten vorhanden.",
       renderFailed: "Der Report konnte nicht erzeugt werden."
     },
     en: {
-      previewTitle: "ScreenSteps preview",
+      previewTitle: "DokuFaden preview",
       loading: "Loading report...",
       errorTitle: "Export not available",
       missingRecording: "No recorded session with steps is available.",

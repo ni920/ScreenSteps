@@ -6,7 +6,7 @@ const managerButton = document.getElementById("managerButton");
 
 const UI_COPY = {
   de: {
-    title: "ScreenSteps",
+    title: "DokuFaden",
     ready: "Bereit",
     recordingActive: "Recording aktiv",
     startButton: "Record starten",
@@ -21,7 +21,7 @@ const UI_COPY = {
     unknownError: "Unbekannter Fehler."
   },
   en: {
-    title: "ScreenSteps",
+    title: "DokuFaden",
     ready: "Ready",
     recordingActive: "Recording active",
     startButton: "Start recording",
