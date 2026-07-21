@@ -173,7 +173,7 @@
     const recording = resolveRecording(source);
     const host = sanitizeSegment(getHostLabel(recording?.initial_url)) || "recording";
     const stamp = String(recording?.started_at || new Date().toISOString()).replace(/[:.]/g, "-");
-    return `screensteps-${host}-${stamp}`;
+    return `dokufaden-${host}-${stamp}`;
   }
 
   function buildFileName(source, extension) {
@@ -181,7 +181,7 @@
   }
 
   function buildRecordingFileName(source) {
-    return `${buildExportBaseName(source)}.screensteps`;
+    return `${buildExportBaseName(source)}.dokufaden`;
   }
 
   function getScreenshotMap(recording) {
@@ -321,7 +321,7 @@
       <main class="report">
         <header class="report-header">
           <div>
-            <p class="eyebrow">ScreenSteps</p>
+            <p class="eyebrow">DokuFaden</p>
             <h1>${escapeHtml(copy.reportTitle)} ${escapeHtml(title)}</h1>
             <p class="lead">${escapeHtml(copy.lead)}</p>
           </div>
@@ -746,7 +746,7 @@
   <body>
     <div class="confluence-shell">
       <section class="confluence-intro">
-        <p class="eyebrow">ScreenSteps</p>
+        <p class="eyebrow">DokuFaden</p>
         <h1>${escapeHtml(copy.confluenceTitle)} ${escapeHtml(title)}</h1>
         <p class="lead">${escapeHtml(copy.confluenceLead)}</p>
         <p>${escapeHtml(copy.confluenceHint)}</p>
@@ -755,7 +755,7 @@
       </section>
 
       <main class="confluence-report">
-        <p class="eyebrow">ScreenSteps</p>
+        <p class="eyebrow">DokuFaden</p>
         <h1>${escapeHtml(copy.reportTitle)} ${escapeHtml(title)}</h1>
         <p class="lead">${escapeHtml(copy.lead)}</p>
         <ul class="session-meta">
@@ -851,7 +851,7 @@
     return `
       <div style="font-family:'Segoe UI',Arial,sans-serif;color:#173529;background:#f7f4eb;padding:24px;">
         <div style="max-width:840px;margin:0 auto;">
-          <div style="font-size:12px;line-height:1.4;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#5f7369;">ScreenSteps</div>
+          <div style="font-size:12px;line-height:1.4;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#5f7369;">DokuFaden</div>
           <div style="margin-top:8px;font-size:32px;line-height:1.15;font-weight:800;color:#173529;">
             ${escapeHtml(copy.reportTitle)} ${escapeHtml(title)}
           </div>
@@ -872,7 +872,7 @@
     const copy = getCopy(recording);
     const steps = recording?.steps || [];
     const lines = [
-      `ScreenSteps - ${buildDisplayTitle(recording)}`,
+      `DokuFaden - ${buildDisplayTitle(recording)}`,
       "",
       `${copy.start}: ${formatTimestamp(recording?.started_at, recording)}`,
       `${copy.end}: ${formatTimestamp(recording?.ended_at, recording)}`,
@@ -950,7 +950,7 @@
     const steps = recording?.steps || [];
     const screenshotMap = getScreenshotMap(recording);
     const lines = [
-      "# ScreenSteps",
+      "# DokuFaden",
       "",
       `${copy.recordingOn} **${buildDisplayTitle(recording)}**`,
       "",
@@ -1266,7 +1266,7 @@
     }
 
     return {
-      format: "screensteps-recording",
+      format: "dokufaden-recording",
       format_version: 1,
       exported_at: new Date().toISOString(),
       recording
@@ -1282,7 +1282,7 @@
 
     const fileName = buildRecordingFileName(payload.recording);
     const blob = new Blob([JSON.stringify(payload)], {
-      type: "application/vnd.screensteps.recording+json;charset=utf-8"
+      type: "application/vnd.dokufaden.recording+json;charset=utf-8"
     });
 
     await downloadBlob(blob, fileName);

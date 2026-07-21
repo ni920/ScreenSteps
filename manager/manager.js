@@ -47,7 +47,7 @@ const exportRecordingFileButton = document.getElementById("exportRecordingFileBu
 
 const UI_COPY = {
   de: {
-    documentTitle: "ScreenSteps Verwaltung",
+    documentTitle: "DokuFaden Verwaltung",
     pageTitle: "Aufnahmeverwaltung",
     pageLead: "Alle gespeicherten Recordings an einem Ort. Exportiere, importiere, prüfe oder lösche sie direkt hier.",
     refresh: "Aktualisieren",
@@ -72,7 +72,7 @@ const UI_COPY = {
     activeSectionTitle: "Aktive Aufnahme",
     archiveSectionTitle: "Archiv",
     archiveSectionCopy:
-      "Importiere eine ScreenSteps-Datei oder exportiere gespeicherte Abläufe gesammelt über das Export-Menü.",
+      "Importiere eine DokuFaden-Datei oder exportiere gespeicherte Abläufe gesammelt über das Export-Menü.",
     previewAlt: "Preview für",
     noPreview: "Noch kein Vorschaubild vorhanden",
     activeBadge: "Aktiv",
@@ -87,7 +87,7 @@ const UI_COPY = {
     shareLabel: "Teilen",
     clipboard: "Zwischenablage",
     archiveFile: "Archivdatei",
-    recordingFile: "ScreenSteps Datei",
+    recordingFile: "DokuFaden-Datei",
     importRecording: "Ablauf importieren",
     markdown: "Markdown ZIP",
     html: "HTML ZIP",
@@ -114,7 +114,7 @@ const UI_COPY = {
     markdownDownloaded: (name) => `Markdown-ZIP '${name}' wurde in Downloads angelegt.`,
     htmlDownloaded: (name) => `HTML-ZIP '${name}' wurde in Downloads angelegt.`,
     confluenceDownloaded: (name) => `Confluence-Export '${name}' wurde in Downloads angelegt.`,
-    recordingFileDownloaded: (name) => `ScreenSteps-Datei '${name}' wurde in Downloads angelegt.`,
+    recordingFileDownloaded: (name) => `DokuFaden-Datei '${name}' wurde in Downloads angelegt.`,
     clipboardCopied: "Ablauf mit eingebetteten Bildern in die Zwischenablage kopiert. Du kannst ihn direkt in Teams einfügen.",
     importingRecording: "Ablauf wird importiert...",
     recordingImported: (name) => `Ablauf '${name}' wurde importiert.`,
@@ -124,7 +124,7 @@ const UI_COPY = {
     managerLoadFailed: "Die Verwaltung konnte nicht geladen werden."
   },
   en: {
-    documentTitle: "ScreenSteps manager",
+    documentTitle: "DokuFaden manager",
     pageTitle: "Recording manager",
     pageLead: "All saved recordings in one place. Export, import, review, or delete them here.",
     refresh: "Refresh",
@@ -149,7 +149,7 @@ const UI_COPY = {
     activeSectionTitle: "Active recording",
     archiveSectionTitle: "Archive",
     archiveSectionCopy:
-      "Import a ScreenSteps file or keep saved flows compact via the grouped export menu.",
+      "Import a DokuFaden file or keep saved flows compact via the grouped export menu.",
     previewAlt: "Preview for",
     noPreview: "No preview available yet",
     activeBadge: "Active",
@@ -164,7 +164,7 @@ const UI_COPY = {
     shareLabel: "Share",
     clipboard: "Clipboard",
     archiveFile: "Archive file",
-    recordingFile: "ScreenSteps file",
+    recordingFile: "DokuFaden file",
     importRecording: "Import flow",
     markdown: "Markdown ZIP",
     html: "HTML ZIP",
@@ -191,7 +191,7 @@ const UI_COPY = {
     markdownDownloaded: (name) => `Markdown ZIP '${name}' was saved to Downloads.`,
     htmlDownloaded: (name) => `HTML ZIP '${name}' was saved to Downloads.`,
     confluenceDownloaded: (name) => `Confluence export '${name}' was saved to Downloads.`,
-    recordingFileDownloaded: (name) => `ScreenSteps file '${name}' was saved to Downloads.`,
+    recordingFileDownloaded: (name) => `DokuFaden file '${name}' was saved to Downloads.`,
     clipboardCopied: "Flow copied to the clipboard with embedded images. You can paste it directly into Teams.",
     importingRecording: "Importing flow...",
     recordingImported: (name) => `Flow '${name}' was imported.`,

@@ -1,4 +1,4 @@
-/* ── ScreenSteps GitHub Page ──────────────────────────────────────────────── */
+/* ── DokuFaden GitHub Page ───────────────────────────────────────────────── */
 :root {
   --bg:           #f8f4ea;
   --bg2:          #dfece6;
@@ -517,4 +517,3 @@ footer a:hover { text-decoration: underline; }
   .hero-cta { flex-direction: column; align-items: stretch; }
   .hero-cta .btn { justify-content: center; }
 }
-

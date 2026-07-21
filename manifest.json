@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "ScreenSteps",
-  "version": "0.1.19",
+  "name": "DokuFaden",
+  "version": "0.1.20",
   "description": "Record browser interactions step by step, capture screenshots automatically and export documentation as Markdown, HTML or PDF.",
   "icons": {
     "16": "assets/icons/icon16.png",
@@ -25,7 +25,7 @@
     "service_worker": "src/background.js"
   },
   "action": {
-    "default_title": "ScreenSteps",
+    "default_title": "DokuFaden",
     "default_popup": "popup/popup.html"
   },
   "options_page": "manager/manager.html",

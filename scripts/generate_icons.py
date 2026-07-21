@@ -1,5 +1,5 @@
 """
-Generates ScreenSteps extension icons at 16, 32, 48 and 128 px.
+Generates DokuFaden extension icons at 16, 32, 48 and 128 px.
 Design: black background · red dot · white bold "REC" text
 Requires: pip install Pillow
 """
